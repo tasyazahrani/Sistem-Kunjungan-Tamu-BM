@@ -1,0 +1,4 @@
+composer require simplesoftwareio/simple-qrcode
+composer require barryvdh/laravel-dompdf
+composer require maatwebsite/excel
+composer require laravel/ui
