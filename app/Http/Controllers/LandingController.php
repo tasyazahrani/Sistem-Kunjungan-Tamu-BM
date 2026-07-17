@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/LandingController.php
 
 namespace App\Http\Controllers;
 
@@ -16,11 +15,11 @@ class LandingController extends Controller
             // Cek koneksi database
             DB::connection()->getPdo();
             
-            // Data statistik dengan fallback
+            // Data statistik
             $totalKunjungan = Kunjungan::count() ?? 0;
             $totalInstansi = Instansi::count() ?? 0;
             $hariIni = Kunjungan::whereDate('waktu_kunjungan', Carbon::today())->count() ?? 0;
-            $ratingRata = Kunjungan::whereNotNull('rating')->avg('rating') ?? 0; // <-- HANYA YANG ADA RATING
+            $ratingRata = Kunjungan::whereNotNull('rating')->avg('rating') ?? 0;
 
             // Data tren 7 hari terakhir
             $trenLanding = Kunjungan::selectRaw('DATE(waktu_kunjungan) as tanggal, COUNT(*) as jumlah')

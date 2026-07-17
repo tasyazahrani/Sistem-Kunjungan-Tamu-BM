@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/guest.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -33,9 +32,13 @@
 
         /* ===== NAVBAR ===== */
         .navbar-guest {
-            background: var(--primary) !important;
+            background: rgba(11, 61, 46, 0.92) !important;
             padding: 0.8rem 0;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 10;
         }
 
         .navbar-guest .navbar-brand {
@@ -49,6 +52,10 @@
             font-size: 0.65rem;
             opacity: 0.8;
             display: block;
+        }
+
+        .navbar-guest .navbar-brand i {
+            font-size: 1.5rem;
         }
 
         .navbar-guest .nav-link {
@@ -67,52 +74,114 @@
             font-weight: 600;
         }
 
+        .navbar-guest .btn-light:hover {
+            background: #e8f5e9;
+            border-color: #e8f5e9;
+        }
+
         .navbar-guest .btn-outline-light:hover {
             background: #fff;
             color: var(--primary) !important;
         }
 
-        /* ===== HERO ===== */
-        .hero-section {
-            background: linear-gradient(135deg, #0b3d2e 0%, #1a6b4a 100%);
-            color: white;
-            padding: 5rem 0 4rem;
-            min-height: 85vh;
+        /* ===== HERO WITH VIDEO BACKGROUND ===== */
+        .hero-video {
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             align-items: center;
+            padding: 6rem 0 4rem;
+            margin-top: -1px;
+        }
+
+        .hero-video-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Video Background - TANPA WATERMARK */
+        .hero-video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Overlay Gradient - BUKAN HIJAU SOLID */
+        .hero-video-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(11, 61, 46, 0.7) 0%, rgba(20, 92, 68, 0.5) 50%, rgba(11, 61, 46, 0.3) 100%);
+            z-index: 1;
+        }
+
+        .hero-video .container {
+            position: relative;
+            z-index: 2;
         }
 
         .hero-title {
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.2;
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #fff;
+            text-shadow: 0 2px 30px rgba(0,0,0,0.3);
         }
 
         .hero-title span {
             color: #a5d6a7;
+            text-shadow: 0 2px 20px rgba(165, 214, 167, 0.3);
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.85;
+            font-size: 1.25rem;
+            opacity: 0.9;
             max-width: 500px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 20px rgba(0,0,0,0.2);
         }
 
         .hero-stats .stat-item {
             background: rgba(255,255,255,0.1);
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .hero-stats .stat-item:hover {
+            background: rgba(255,255,255,0.18);
+            transform: translateY(-2px);
         }
 
         .hero-stats .stat-item .number {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
+            color: #fff;
         }
 
         .hero-stats .stat-item .label {
             font-size: 0.75rem;
             opacity: 0.7;
+            color: rgba(255,255,255,0.8);
         }
 
         /* ===== SECTION ===== */
@@ -133,11 +202,6 @@
             height: 3px;
             background: var(--primary);
             border-radius: 10px;
-        }
-
-        .section-title-left::after {
-            left: 0;
-            transform: none;
         }
 
         /* ===== CARDS ===== */
@@ -237,6 +301,20 @@
             font-size: 1.1rem;
         }
 
+        .cta-section .btn-light {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .cta-section .btn-light:hover {
+            background: #e8f5e9;
+        }
+
+        .cta-section .btn-outline-light:hover {
+            background: #fff;
+            color: var(--primary) !important;
+        }
+
         /* ===== FOOTER ===== */
         .footer-guest {
             background: var(--primary);
@@ -271,14 +349,64 @@
             transform: translateY(-3px);
         }
 
+        /* ===== ANIMATIONS ===== */
+        .hero-video-wrapper {
+            animation: videoFadeIn 1.5s ease;
+        }
+
+        @keyframes videoFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .fade-in-up-delay-1 {
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        .fade-in-up-delay-2 {
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero-video {
+                min-height: auto;
+                padding: 5rem 0 3rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
-            .hero-section {
-                padding: 3rem 0 2rem;
-                min-height: auto;
+            .hero-subtitle {
+                font-size: 1rem;
             }
             .section-title {
                 font-size: 1.5rem;
@@ -290,22 +418,173 @@
                 font-size: 1.5rem;
             }
             .hero-stats .stat-item .number {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
+            }
+            .hero-stats .stat-item {
+                padding: 0.4rem 1rem;
+            }
+            .hero-video {
+                padding: 4rem 0 2rem;
             }
         }
 
         @media (max-width: 576px) {
             .hero-title {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
             .hero-subtitle {
-                font-size: 1rem;
+                font-size: 0.95rem;
             }
             .card-stat {
                 padding: 1rem;
             }
             .card-feature {
                 padding: 1.5rem 1rem;
+            }
+            .hero-stats .stat-item {
+                padding: 0.3rem 0.8rem;
+            }
+            .hero-stats .stat-item .number {
+                font-size: 1rem;
+            }
+            .hero-stats .stat-item .label {
+                font-size: 0.65rem;
+            }
+            .hero-video {
+                padding: 3rem 0 1.5rem;
+                min-height: auto;
+            }
+        }
+
+        /* ===== FLASH MESSAGES ===== */
+        .alert-guest {
+            border-radius: 12px;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-guest .btn-close {
+            font-size: 0.7rem;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* ===== FORM GUEST ===== */
+        .form-control-lg,
+        .form-select-lg {
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            padding: 0.65rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-lg:focus,
+        .form-select-lg:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+        }
+
+        .form-control-lg.is-invalid:focus,
+        .form-select-lg.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-label .text-danger {
+            font-weight: 700;
+        }
+
+        .form-label .text-muted {
+            font-weight: 400;
+        }
+
+        .btn-success {
+            background: var(--primary);
+            border-color: var(--primary);
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(11, 61, 46, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 10px;
+            font-weight: 600;
+            border-width: 1.5px;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Alert styling */
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .alert-danger ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .alert-danger ul li::before {
+            content: '• ';
+            color: #dc3545;
+        }
+
+        /* Responsive form */
+        @media (max-width: 576px) {
+            .form-control-lg,
+            .form-select-lg {
+                font-size: 0.9rem;
+                padding: 0.5rem 0.8rem;
+            }
+            
+            .guest-body {
+                padding: 1.2rem !important;
+            }
+            
+            .btn-success,
+            .btn-outline-secondary {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -363,6 +642,27 @@
         </div>
     </nav>
 
+    {{-- ===== FLASH MESSAGES ===== --}}
+    @if(session('success'))
+        <div class="container mt-3" style="position: relative; z-index: 10;">
+            <div class="alert alert-success alert-guest alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="container mt-3" style="position: relative; z-index: 10;">
+            <div class="alert alert-danger alert-guest alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    @endif
+
     {{-- ===== CONTENT ===== --}}
     <main>
         @yield('content')
@@ -389,6 +689,7 @@
         </div>
     </footer>
 
+    {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>

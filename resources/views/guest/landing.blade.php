@@ -6,15 +6,26 @@
 @section('content')
 
 {{-- ============================================ --}}
-{{-- HERO SECTION                                 --}}
+{{-- HERO SECTION WITH VIDEO BACKGROUND          --}}
 {{-- ============================================ --}}
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center g-4">
+<section class="hero-video">
+    {{-- Video Background - TANPA WATERMARK --}}
+    <div class="hero-video-wrapper">
+        <video class="hero-video-bg" autoplay muted loop playsinline>
+            {{-- Ganti 'hero-bg.mp4' dengan nama file video Anda --}}
+            <source src="{{ asset('videos/hero-bg.mp4') }}" type="video/mp4">
+            <source src="{{ asset('videos/hero-bg.webm') }}" type="video/webm">
+            {{-- Fallback jika video tidak bisa diputar --}}
+            <img src="{{ asset('images/hero-bg.jpg') }}" alt="Background" style="width:100%;height:100%;object-fit:cover;">
+        </video>
+    </div>
 
-            {{-- Kiri: Teks --}}
-            <div class="col-lg-7">
-                <span class="badge bg-light text-dark mb-3 px-4 py-2 rounded-pill">
+    {{-- Konten --}}
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center fade-in-up">
+
+                <span class="badge bg-light text-dark mb-3 px-4 py-2 rounded-pill" style="font-weight: 600;">
                     <i class="bi bi-star-fill text-warning me-1"></i> Sistem Terpercaya
                 </span>
 
@@ -23,12 +34,12 @@
                     <span>Kunjungan</span> Terpadu
                 </h1>
 
-                <p class="hero-subtitle my-4">
+                <p class="hero-subtitle mx-auto my-4" style="max-width: 600px;">
                     Pantau dan kelola kunjungan tamu secara real-time dengan
                     dashboard interaktif dan analitik lengkap.
                 </p>
 
-                <div class="d-flex flex-wrap gap-3 mb-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-center mb-4">
                     @auth
                         <a href="{{ route('dashboard') }}" class="btn btn-light btn-lg px-5 fw-semibold">
                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
@@ -44,7 +55,7 @@
                 </div>
 
                 {{-- Stats --}}
-                <div class="hero-stats d-flex flex-wrap gap-3">
+                <div class="hero-stats d-flex flex-wrap gap-3 justify-content-center">
                     <div class="stat-item">
                         <div class="number">{{ $totalKunjungan ?? 0 }}</div>
                         <div class="label">Total Kunjungan</div>
@@ -58,15 +69,8 @@
                         <div class="label">Hari Ini</div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Kanan: Ilustrasi --}}
-            <div class="col-lg-5 text-center">
-                <div class="bg-white bg-opacity-10 rounded-4 p-5" style="backdrop-filter: blur(10px);">
-                    <i class="bi bi-clipboard-data" style="font-size: 7rem; color: rgba(255,255,255,0.3);"></i>
-                </div>
             </div>
-
         </div>
     </div>
 </section>
@@ -169,59 +173,26 @@
         </div>
 
         <div class="row g-4">
-            {{-- Fitur 1 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-speedometer2"></i></div>
-                    <h5>Dashboard Real-time</h5>
-                    <p>Lihat statistik kunjungan secara langsung dengan grafik interaktif.</p>
-                </div>
-            </div>
+            @php
+                $features = [
+                    ['icon' => 'speedometer2', 'title' => 'Dashboard Real-time', 'desc' => 'Lihat statistik kunjungan secara langsung dengan grafik interaktif dan visualisasi data.'],
+                    ['icon' => 'qr-code', 'title' => 'QR Code Check-in', 'desc' => 'Scan QR code untuk akses cepat dan verifikasi kunjungan secara otomatis.'],
+                    ['icon' => 'file-earmark-pdf', 'title' => 'Ekspor Laporan', 'desc' => 'Unduh laporan kunjungan dalam format PDF, Excel, atau CSV dengan mudah.'],
+                    ['icon' => 'bell', 'title' => 'Notifikasi Otomatis', 'desc' => 'Dapatkan notifikasi real-time untuk setiap kunjungan baru atau perubahan status.'],
+                    ['icon' => 'graph-up', 'title' => 'Analitik Lengkap', 'desc' => 'Analisis data kunjungan dengan berbagai filter dan dimensi yang fleksibel.'],
+                    ['icon' => 'shield-check', 'title' => 'Keamanan Terjamin', 'desc' => 'Sistem aman dengan autentikasi dan otorisasi untuk setiap pengguna.'],
+                ];
+            @endphp
 
-            {{-- Fitur 2 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-qr-code"></i></div>
-                    <h5>QR Code Check-in</h5>
-                    <p>Scan QR code untuk akses cepat dan verifikasi otomatis.</p>
+            @foreach ($features as $feature)
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-feature">
+                        <div class="icon"><i class="bi bi-{{ $feature['icon'] }}"></i></div>
+                        <h5>{{ $feature['title'] }}</h5>
+                        <p>{{ $feature['desc'] }}</p>
+                    </div>
                 </div>
-            </div>
-
-            {{-- Fitur 3 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-file-earmark-pdf"></i></div>
-                    <h5>Ekspor Laporan</h5>
-                    <p>Unduh laporan kunjungan dalam format PDF, Excel, atau CSV.</p>
-                </div>
-            </div>
-
-            {{-- Fitur 4 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-bell"></i></div>
-                    <h5>Notifikasi Otomatis</h5>
-                    <p>Dapatkan notifikasi real-time setiap kunjungan baru.</p>
-                </div>
-            </div>
-
-            {{-- Fitur 5 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-graph-up"></i></div>
-                    <h5>Analitik Lengkap</h5>
-                    <p>Analisis data dengan berbagai filter dan dimensi fleksibel.</p>
-                </div>
-            </div>
-
-            {{-- Fitur 6 --}}
-            <div class="col-lg-4 col-md-6">
-                <div class="card-feature">
-                    <div class="icon"><i class="bi bi-shield-check"></i></div>
-                    <h5>Keamanan Terjamin</h5>
-                    <p>Sistem aman dengan autentikasi dan otorisasi pengguna.</p>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -257,6 +228,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Chart untuk tren kunjungan
         const labels = {!! json_encode($trenLanding->pluck('tanggal') ?? []) !!};
         const data = {!! json_encode($trenLanding->pluck('jumlah') ?? []) !!};
 
@@ -283,13 +255,36 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            cornerRadius: 8
+                        }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1 }
+                            ticks: { 
+                                stepSize: 1,
+                                font: { size: 11 }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 11 }
+                            }
                         }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
             });
