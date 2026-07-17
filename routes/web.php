@@ -9,14 +9,20 @@ use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // <-- TAMBAHKAN INI
 
 /*
 |--------------------------------------------------------------------------
-| Halaman Publik — Buku Tamu Digital (diakses via scan QR Code, tanpa login)
+| Halaman Publik — Landing Page & Buku Tamu Digital
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => redirect()->route('guest.form'));
+
+// Landing Page (beranda publik)
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+
+// Buku Tamu Digital (diakses via scan QR Code, tanpa login)
 Route::get('/buku-tamu', [GuestController::class, 'create'])->name('guest.form');
 Route::post('/buku-tamu', [GuestController::class, 'store'])->name('guest.store');
 Route::get('/buku-tamu/sukses/{kunjungan}', [GuestController::class, 'success'])->name('guest.success');
@@ -26,6 +32,11 @@ Route::get('/buku-tamu/sukses/{kunjungan}', [GuestController::class, 'success'])
 | Autentikasi
 |--------------------------------------------------------------------------
 */
+
+// OPTION 1: Jika Anda menggunakan Auth bawaan Laravel (Uncomment ini, dan comment yang manual di bawah)
+// Auth::routes();
+
+// OPTION 2: Jika Anda menggunakan custom AuthController (seperti yang Anda gunakan)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -43,12 +54,12 @@ Route::middleware('auth')->group(function () {
     // Riwayat & filter — semua role
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
 
-    // Laporan — semua role bisa lihat/cetak, Pimpinan hanya unduh (view sama, aksi ditombolkan)
+    // Laporan — semua role bisa lihat/cetak
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])->name('laporan.pdf');
     Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('laporan.excel');
 
-    // QR Code — khusus Admin & Petugas (tanpa middleware role ganda)
+    // QR Code — khusus Admin & Petugas
     Route::get('/qrcode', [QrCodeController::class, 'show'])
         ->name('qrcode.show')
         ->middleware('role:admin,petugas');
