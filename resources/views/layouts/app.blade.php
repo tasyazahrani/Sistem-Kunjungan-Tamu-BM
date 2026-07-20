@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,7 +30,9 @@
             overflow-x: hidden;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* ============================================ */
+        /* SIDEBAR                                      */
+        /* ============================================ */
         .sidebar {
             min-height: 100vh;
             background: var(--primary-green);
@@ -99,7 +100,9 @@
             box-shadow: inset 3px 0 0 rgba(255,255,255,0.5);
         }
 
-        /* ===== MAIN CONTENT ===== */
+        /* ============================================ */
+        /* MAIN CONTENT                                 */
+        /* ============================================ */
         .main-content {
             flex: 1;
             min-height: 100vh;
@@ -107,7 +110,9 @@
             flex-direction: column;
         }
 
-        /* ===== TOPBAR ===== */
+        /* ============================================ */
+        /* TOPBAR                                       */
+        /* ============================================ */
         .topbar {
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
@@ -123,7 +128,9 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ===== CARDS ===== */
+        /* ============================================ */
+        /* CARDS                                        */
+        /* ============================================ */
         .card-stat {
             border: none;
             border-radius: .9rem;
@@ -137,14 +144,48 @@
             box-shadow: 0 8px 25px rgba(0,0,0,.08);
         }
 
-        /* ===== BADGE ===== */
+        /* ============================================ */
+        /* CHART WRAPPER - AGAR SEJAJAR                 */
+        /* ============================================ */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+        }
+
+        .chart-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 220px;
+        }
+
+        /* Untuk chart yang lebih tinggi (seperti tren) */
+        .chart-wrapper-tall {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 250px;
+        }
+
+        .chart-wrapper-tall canvas {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 250px;
+        }
+
+        /* ============================================ */
+        /* BADGE STATUS                                 */
+        /* ============================================ */
         .badge-status {
             font-size: .75rem;
             padding: 0.4rem 0.8rem;
             border-radius: 20px;
         }
 
-        /* ===== TABLE ===== */
+        /* ============================================ */
+        /* TABLE                                        */
+        /* ============================================ */
         .table thead th {
             font-size: .78rem;
             text-transform: uppercase;
@@ -159,7 +200,28 @@
             font-size: 0.9rem;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ============================================ */
+        /* CARD BODY PADDING UNIFORM                    */
+        /* ============================================ */
+        .card-stat .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-stat .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-stat .card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE                                   */
+        /* ============================================ */
         @media (max-width: 991.98px) {
             .sidebar {
                 position: fixed;
@@ -188,9 +250,45 @@
             .sidebar-overlay.show {
                 display: block;
             }
+
+            .chart-wrapper,
+            .chart-wrapper-tall {
+                min-height: 180px;
+            }
+
+            .chart-wrapper canvas,
+            .chart-wrapper-tall canvas {
+                max-height: 180px;
+            }
         }
 
-        /* ===== UTILITY ===== */
+        @media (max-width: 576px) {
+            .chart-wrapper,
+            .chart-wrapper-tall {
+                min-height: 150px;
+            }
+
+            .chart-wrapper canvas,
+            .chart-wrapper-tall canvas {
+                max-height: 150px;
+            }
+
+            .card-stat .card-value {
+                font-size: 1.25rem;
+            }
+
+            .topbar {
+                padding: 0.5rem 1rem;
+            }
+
+            .main-content .p-3.p-md-4 {
+                padding: 0.75rem !important;
+            }
+        }
+
+        /* ============================================ */
+        /* UTILITY                                      */
+        /* ============================================ */
         .text-primary-green {
             color: var(--primary-green);
         }
@@ -206,6 +304,38 @@
             background: var(--secondary-green);
             border-color: var(--secondary-green);
             color: #fff;
+        }
+
+        /* ============================================ */
+        /* SCROLLBAR GLOBAL                             */
+        /* ============================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-green);
+        }
+
+        /* ============================================ */
+        /* FLASH MESSAGES                               */
+        /* ============================================ */
+        .alert-custom {
+            border-radius: 0.75rem;
+            border: none;
+            padding: 0.85rem 1.25rem;
+        }
+
+        .alert-custom .btn-close {
+            font-size: 0.7rem;
         }
     </style>
 
@@ -291,7 +421,7 @@
         <div class="p-3 p-md-4 flex-grow-1">
             {{-- Flash Messages --}}
             @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <div class="alert alert-success alert-custom alert-dismissible fade show shadow-sm" role="alert">
                     <i class="bi bi-check-circle-fill me-2"></i>
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -299,7 +429,7 @@
             @endif
             
             @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <div class="alert alert-danger alert-custom alert-dismissible fade show shadow-sm" role="alert">
                     <i class="bi bi-exclamation-circle-fill me-2"></i>
                     {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -307,7 +437,7 @@
             @endif
 
             @if(session('warning'))
-                <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <div class="alert alert-warning alert-custom alert-dismissible fade show shadow-sm" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     {{ session('warning') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -317,7 +447,7 @@
             @yield('content')
         </div>
 
-        {{-- FOOTER (optional) --}}
+        {{-- FOOTER --}}
         <footer class="text-center text-muted py-3 border-top bg-white small">
             &copy; {{ date('Y') }} SIMANTAP - Sekda Kabupaten Bener Meriah
         </footer>
