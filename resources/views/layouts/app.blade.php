@@ -44,6 +44,7 @@
             height: 100vh;
             overflow-y: auto;
             transition: all 0.3s ease;
+            z-index: 1050;
         }
 
         .sidebar::-webkit-scrollbar {
@@ -108,6 +109,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
 
         /* ============================================ */
@@ -129,6 +131,174 @@
         }
 
         /* ============================================ */
+        /* NOTIFICATION DROPDOWN                        */
+        /* ============================================ */
+        .notif-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            padding: 0.25rem 0.5rem;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .notif-btn:hover {
+            color: var(--primary-green);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #dc3545;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.55rem;
+            padding: 0.15rem 0.4rem;
+            min-width: 18px;
+            text-align: center;
+            border: 2px solid #fff;
+            display: none;
+        }
+
+        .notif-badge.show {
+            display: block;
+        }
+
+        .notif-dropdown {
+            min-width: 380px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .notif-dropdown .dropdown-header {
+            padding: 0.75rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .notif-dropdown .dropdown-item {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid #f1f3f5;
+            cursor: pointer;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .notif-dropdown .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-dropdown .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notif-dropdown .dropdown-item.unread {
+            background: #f0fdf4;
+        }
+
+        .notif-dropdown .dropdown-item.unread:hover {
+            background: #dcfce7;
+        }
+
+        .notif-dropdown .notif-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notif-dropdown .notif-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-dropdown .notif-text .notif-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 2px;
+        }
+
+        .notif-dropdown .notif-text .notif-title.bold {
+            font-weight: 700;
+        }
+
+        .notif-dropdown .notif-text .notif-message {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .notif-dropdown .notif-text .notif-time {
+            font-size: 0.65rem;
+            color: #adb5bd;
+        }
+
+        .notif-dropdown .notif-mark-read {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 0.7rem;
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .notif-dropdown .notif-mark-read:hover {
+            color: var(--primary-green);
+        }
+
+        .notif-dropdown .notif-footer {
+            padding: 0.5rem 1rem;
+            text-align: center;
+            border-top: 1px solid #f1f3f5;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            position: sticky;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .notif-dropdown .notif-footer a {
+            font-size: 0.8rem;
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        .notif-dropdown .notif-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .notif-dropdown .notif-empty {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: #adb5bd;
+        }
+
+        .notif-dropdown .notif-empty i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .notif-dropdown .notif-empty p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* ============================================ */
         /* CARDS                                        */
         /* ============================================ */
         .card-stat {
@@ -145,78 +315,182 @@
         }
 
         /* ============================================ */
-        /* CHART WRAPPER - AGAR SEJAJAR                 */
+        /* TOAST NOTIFICATION                           */
         /* ============================================ */
-        .chart-wrapper {
-            position: relative;
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 380px;
             width: 100%;
-            height: 100%;
-            min-height: 220px;
         }
 
-        .chart-wrapper canvas {
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 220px;
-        }
-
-        /* Untuk chart yang lebih tinggi (seperti tren) */
-        .chart-wrapper-tall {
+        .toast-custom {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary-green);
+            animation: slideInRight 0.4s ease forwards;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
             position: relative;
-            width: 100%;
-            height: 100%;
-            min-height: 250px;
         }
 
-        .chart-wrapper-tall canvas {
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 250px;
+        .toast-custom.toast-success {
+            border-left-color: #198754;
         }
 
-        /* ============================================ */
-        /* BADGE STATUS                                 */
-        /* ============================================ */
-        .badge-status {
-            font-size: .75rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
+        .toast-custom.toast-error {
+            border-left-color: #dc3545;
         }
 
-        /* ============================================ */
-        /* TABLE                                        */
-        /* ============================================ */
-        .table thead th {
-            font-size: .78rem;
-            text-transform: uppercase;
-            color: #6b7280;
-            border-bottom-width: 1px;
+        .toast-custom.toast-warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast-custom .toast-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .toast-custom .toast-content {
+            flex: 1;
+        }
+
+        .toast-custom .toast-content .toast-title {
             font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .table tbody td {
-            vertical-align: middle;
             font-size: 0.9rem;
+            color: #212529;
+        }
+
+        .toast-custom .toast-content .toast-message {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .toast-custom .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #adb5bd;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .toast-custom .toast-close:hover {
+            color: #212529;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        .toast-custom.hiding {
+            animation: slideOutRight 0.3s ease forwards;
         }
 
         /* ============================================ */
-        /* CARD BODY PADDING UNIFORM                    */
+        /* MODAL                                        */
         /* ============================================ */
-        .card-stat .card-body {
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 1.25rem;
+            background: #f8f9fa;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header .modal-title {
+            font-size: 1rem;
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e5e7eb;
+            padding: 0.75rem 1.25rem;
+            background: #f8f9fa;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .modal-body {
             padding: 1.25rem;
         }
 
-        .card-stat .card-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
+        .modal-body .form-control {
+            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
         }
 
-        .card-stat .card-value {
-            font-size: 1.75rem;
-            font-weight: 700;
+        .modal-body .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.1);
+        }
+
+        /* ============================================ */
+        /* LOADING SPINNER                              */
+        /* ============================================ */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.7);
+            z-index: 9998;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-overlay.show {
+            display: flex;
+        }
+
+        .spinner-border-custom {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid #e5e7eb;
+            border-top-color: var(--primary-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* ============================================ */
@@ -251,38 +525,39 @@
                 display: block;
             }
 
-            .chart-wrapper,
-            .chart-wrapper-tall {
-                min-height: 180px;
+            .toast-container {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                max-width: 100%;
             }
 
-            .chart-wrapper canvas,
-            .chart-wrapper-tall canvas {
-                max-height: 180px;
+            .notif-dropdown {
+                min-width: 320px;
             }
         }
 
         @media (max-width: 576px) {
-            .chart-wrapper,
-            .chart-wrapper-tall {
-                min-height: 150px;
-            }
-
-            .chart-wrapper canvas,
-            .chart-wrapper-tall canvas {
-                max-height: 150px;
-            }
-
-            .card-stat .card-value {
-                font-size: 1.25rem;
-            }
-
             .topbar {
                 padding: 0.5rem 1rem;
             }
-
             .main-content .p-3.p-md-4 {
                 padding: 0.75rem !important;
+            }
+            .toast-container {
+                top: 60px;
+                right: 8px;
+                left: 8px;
+            }
+            .toast-custom {
+                padding: 0.75rem 1rem;
+            }
+            .toast-custom .toast-icon {
+                font-size: 1.2rem;
+            }
+            .notif-dropdown {
+                min-width: 280px;
+                max-width: 90vw;
             }
         }
 
@@ -306,8 +581,28 @@
             color: #fff;
         }
 
+        .btn-sm {
+            padding: 0.25rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        /* List group item */
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 0.6rem 0;
+        }
+
+        .list-group-item:first-child {
+            border-top: none;
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
         /* ============================================ */
-        /* SCROLLBAR GLOBAL                             */
+        /* SCROLLBAR                                    */
         /* ============================================ */
         ::-webkit-scrollbar {
             width: 6px;
@@ -325,23 +620,23 @@
             background: var(--secondary-green);
         }
 
-        /* ============================================ */
-        /* FLASH MESSAGES                               */
-        /* ============================================ */
+        /* Flash messages dihapus, pake toast */
         .alert-custom {
-            border-radius: 0.75rem;
-            border: none;
-            padding: 0.85rem 1.25rem;
-        }
-
-        .alert-custom .btn-close {
-            font-size: 0.7rem;
+            display: none;
         }
     </style>
 
     @stack('styles')
 </head>
 <body>
+
+{{-- LOADING SPINNER --}}
+<div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner-border-custom"></div>
+</div>
+
+{{-- TOAST CONTAINER --}}
+<div class="toast-container" id="toastContainer"></div>
 
 <div class="d-flex">
     {{-- SIDEBAR OVERLAY (Mobile) --}}
@@ -392,7 +687,6 @@
         {{-- TOPBAR --}}
         <div class="topbar d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                {{-- Toggle Sidebar Mobile --}}
                 <button class="btn btn-sm btn-outline-secondary d-lg-none" id="sidebarToggle">
                     <i class="bi bi-list"></i>
                 </button>
@@ -401,6 +695,31 @@
             
             @auth
             <div class="d-flex align-items-center gap-3">
+                {{-- ============================================ --}}
+                {{-- NOTIFICATION DROPDOWN                       --}}
+                {{-- ============================================ --}}
+                <div class="dropdown">
+                    <button class="notif-btn" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell"></i>
+                        <span class="notif-badge" id="notifBadge">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end notif-dropdown" id="notifList" aria-labelledby="notifDropdown">
+                        <li class="dropdown-header d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Notifikasi</span>
+                            <button class="btn btn-sm btn-link p-0 text-primary-green" onclick="markAllAsRead()" style="font-size:0.75rem; text-decoration:none;">
+                                Tandai semua dibaca
+                            </button>
+                        </li>
+                        <li class="notif-empty" id="notifEmpty">
+                            <i class="bi bi-inbox"></i>
+                            <p>Belum ada notifikasi</p>
+                        </li>
+                        <li class="notif-footer">
+                            <a href="{{ route('notifications.index') }}">Lihat semua notifikasi</a>
+                        </li>
+                    </ul>
+                </div>
+
                 <span class="text-muted small user-info d-none d-sm-inline">
                     <i class="bi bi-person-circle me-1"></i>
                     {{ auth()->user()->name }}
@@ -419,31 +738,6 @@
 
         {{-- CONTENT --}}
         <div class="p-3 p-md-4 flex-grow-1">
-            {{-- Flash Messages --}}
-            @if(session('success'))
-                <div class="alert alert-success alert-custom alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-            
-            @if(session('error'))
-                <div class="alert alert-danger alert-custom alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
-            @if(session('warning'))
-                <div class="alert alert-warning alert-custom alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    {{ session('warning') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-
             @yield('content')
         </div>
 
@@ -457,9 +751,12 @@
 {{-- Bootstrap JS --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-{{-- Script untuk Sidebar Mobile --}}
+{{-- Global Script --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // ============================================
+        // SIDEBAR TOGGLE
+        // ============================================
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         const toggleBtn = document.getElementById('sidebarToggle');
@@ -478,7 +775,6 @@
             overlay.addEventListener('click', toggleSidebar);
         }
 
-        // Auto close sidebar on window resize to desktop
         window.addEventListener('resize', function() {
             if (window.innerWidth > 991.98 && sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
@@ -486,6 +782,240 @@
                 document.body.style.overflow = '';
             }
         });
+
+        // ============================================
+        // TOAST NOTIFICATION
+        // ============================================
+        window.showToast = function(message, type = 'success', title = null) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const icons = {
+                success: 'bi-check-circle-fill text-success',
+                error: 'bi-exclamation-circle-fill text-danger',
+                warning: 'bi-exclamation-triangle-fill text-warning',
+                info: 'bi-info-circle-fill text-info'
+            };
+
+            const titles = {
+                success: 'Berhasil!',
+                error: 'Gagal!',
+                warning: 'Peringatan!',
+                info: 'Informasi'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `toast-custom toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="bi ${icons[type] || icons.info}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || titles[type] || 'Info'}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.closest('.toast-custom').remove()">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                if (toast.parentNode) {
+                    toast.classList.add('hiding');
+                    setTimeout(function() {
+                        if (toast.parentNode) toast.remove();
+                    }, 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', function(e) {
+                if (e.target.closest('.toast-close')) return;
+                toast.classList.add('hiding');
+                setTimeout(function() {
+                    if (toast.parentNode) toast.remove();
+                }, 300);
+            });
+        };
+
+        // ============================================
+        // LOADING SPINNER
+        // ============================================
+        window.showLoading = function(show = true) {
+            const spinner = document.getElementById('spinnerOverlay');
+            if (spinner) {
+                spinner.classList.toggle('show', show);
+            }
+        };
+
+        // ============================================
+        // CSRF TOKEN
+        // ============================================
+        window.getCsrfToken = function() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        };
+
+        // ============================================
+        // AJAX FETCH HELPER
+        // ============================================
+        window.fetchAjax = function(url, options = {}) {
+            const defaults = {
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin'
+            };
+
+            return fetch(url, { ...defaults, ...options });
+        };
+
+        // ============================================
+        // NOTIFICATION SYSTEM
+        // ============================================
+        let lastCheck = Date.now();
+        let isNotificationOpen = false;
+
+        // Fungsi update badge
+        function updateBadge() {
+            fetch('/api/notifications/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notifBadge');
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.classList.toggle('show', data.count > 0);
+                    }
+                })
+                .catch(error => console.error('Error updating badge:', error));
+        }
+
+        // Fungsi update dropdown
+        function updateDropdown() {
+            fetch('/api/notifications/latest?limit=5')
+                .then(response => response.json())
+                .then(notifications => {
+                    const dropdown = document.getElementById('notifList');
+                    const emptyMessage = document.getElementById('notifEmpty');
+                    
+                    if (!dropdown) return;
+
+                    // Hapus semua item notifikasi (bukan header/footer)
+                    const items = dropdown.querySelectorAll('.dropdown-item:not(.notif-empty):not(.notif-footer)');
+                    items.forEach(item => item.remove());
+
+                    if (notifications.length === 0) {
+                        if (emptyMessage) emptyMessage.style.display = 'block';
+                        return;
+                    }
+
+                    if (emptyMessage) emptyMessage.style.display = 'none';
+
+                    // Tambahkan notifikasi ke dropdown
+                    notifications.forEach((notif, index) => {
+                        const li = document.createElement('li');
+                        li.className = `dropdown-item ${!notif.is_read ? 'unread' : ''}`;
+                        li.dataset.index = index;
+                        
+                        const iconColor = notif.color || 'secondary';
+                        const iconName = notif.icon || 'bi-bell';
+                        
+                        li.innerHTML = `
+                            <div class="d-flex align-items-start gap-2">
+                                <div class="notif-icon bg-${iconColor}-subtle text-${iconColor}">
+                                    <i class="bi ${iconName}"></i>
+                                </div>
+                                <div class="notif-text">
+                                    <div class="notif-title ${!notif.is_read ? 'bold' : ''}">${notif.title}</div>
+                                    <div class="notif-message">${notif.message}</div>
+                                    <div class="notif-time">${notif.time_ago}</div>
+                                </div>
+                                ${!notif.is_read ? `
+                                    <button class="notif-mark-read" onclick="event.stopPropagation(); markAsRead('${notif.id}')">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `;
+
+                        // Klik untuk redirect ke link
+                        if (notif.link) {
+                            li.addEventListener('click', function() {
+                                window.location.href = notif.link;
+                            });
+                        }
+
+                        dropdown.insertBefore(li, dropdown.lastElementChild);
+                    });
+
+                    updateBadge();
+                })
+                .catch(error => console.error('Error updating dropdown:', error));
+        }
+
+        // Fungsi mark as read
+        window.markAsRead = function(id) {
+            fetch(`/api/notifications/${id}/mark-read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateDropdown();
+                    updateBadge();
+                }
+            });
+        };
+
+        // Fungsi mark all as read
+        window.markAllAsRead = function() {
+            fetch('/api/notifications/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateDropdown();
+                    updateBadge();
+                }
+            });
+        };
+
+        // Track dropdown state
+        const dropdownElement = document.getElementById('notifDropdown');
+        if (dropdownElement) {
+            dropdownElement.addEventListener('show.bs.dropdown', function() {
+                isNotificationOpen = true;
+                updateDropdown();
+            });
+            dropdownElement.addEventListener('hide.bs.dropdown', function() {
+                isNotificationOpen = false;
+            });
+        }
+
+        // Inisialisasi
+        updateBadge();
+        updateDropdown();
+
+        // Polling setiap 10 detik
+        setInterval(function() {
+            if (!isNotificationOpen) {
+                updateBadge();
+            }
+        }, 10000);
+
+        // Browser notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
     });
 </script>
 

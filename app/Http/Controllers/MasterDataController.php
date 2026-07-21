@@ -18,72 +18,204 @@ class MasterDataController extends Controller
         return view('master.index', compact('instansis', 'tujuans', 'bidangs'));
     }
 
-    // ---------- Instansi ----------
-    public function storeInstansi(Request $request)
+    // ============================================
+    // INSTANSI - AJAX
+    // ============================================
+    public function storeInstansiAjax(Request $request)
     {
-        $request->validate(['nama_instansi' => ['required', 'string', 'max:150', 'unique:instansis,nama_instansi']]);
-        Instansi::create(['nama_instansi' => $request->nama_instansi]);
+        $request->validate([
+            'nama_instansi' => ['required', 'string', 'max:150', 'unique:instansis,nama_instansi']
+        ]);
 
-        return back()->with('success', 'Instansi berhasil ditambahkan.');
+        $instansi = Instansi::create([
+            'nama_instansi' => $request->nama_instansi,
+            'aktif' => true
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Instansi berhasil ditambahkan.',
+            'data' => [
+                'id' => $instansi->id,
+                'nama' => $instansi->nama_instansi,
+                'aktif' => $instansi->aktif
+            ]
+        ]);
     }
 
-    public function toggleInstansi(Instansi $instansi)
+    public function updateInstansiAjax(Request $request, Instansi $instansi)
     {
-        $instansi->update(['aktif' => ! $instansi->aktif]);
+        $request->validate([
+            'nama_instansi' => ['required', 'string', 'max:150', 'unique:instansis,nama_instansi,' . $instansi->id]
+        ]);
 
-        return back()->with('success', 'Status instansi diperbarui.');
+        $instansi->update(['nama_instansi' => $request->nama_instansi]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Instansi berhasil diperbarui.'
+        ]);
     }
 
-    public function destroyInstansi(Instansi $instansi)
+    public function toggleInstansiAjax(Instansi $instansi)
     {
+        $instansi->update(['aktif' => !$instansi->aktif]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status instansi diperbarui.',
+            'aktif' => $instansi->aktif
+        ]);
+    }
+
+    public function destroyInstansiAjax(Instansi $instansi)
+    {
+        if ($instansi->kunjungans()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Instansi tidak bisa dihapus karena masih digunakan.'
+            ], 422);
+        }
+
         $instansi->delete();
 
-        return back()->with('success', 'Instansi dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Instansi berhasil dihapus.'
+        ]);
     }
 
-    // ---------- Tujuan Kunjungan ----------
-    public function storeTujuan(Request $request)
+    // ============================================
+    // TUJUAN - AJAX
+    // ============================================
+    public function storeTujuanAjax(Request $request)
     {
-        $request->validate(['nama_tujuan' => ['required', 'string', 'max:150', 'unique:tujuan_kunjungans,nama_tujuan']]);
-        TujuanKunjungan::create(['nama_tujuan' => $request->nama_tujuan]);
+        $request->validate([
+            'nama_tujuan' => ['required', 'string', 'max:150', 'unique:tujuan_kunjungans,nama_tujuan']
+        ]);
 
-        return back()->with('success', 'Tujuan kunjungan berhasil ditambahkan.');
+        $tujuan = TujuanKunjungan::create([
+            'nama_tujuan' => $request->nama_tujuan,
+            'aktif' => true
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tujuan kunjungan berhasil ditambahkan.',
+            'data' => [
+                'id' => $tujuan->id,
+                'nama' => $tujuan->nama_tujuan,
+                'aktif' => $tujuan->aktif
+            ]
+        ]);
     }
 
-    public function toggleTujuan(TujuanKunjungan $tujuan)
+    public function updateTujuanAjax(Request $request, TujuanKunjungan $tujuan)
     {
-        $tujuan->update(['aktif' => ! $tujuan->aktif]);
+        $request->validate([
+            'nama_tujuan' => ['required', 'string', 'max:150', 'unique:tujuan_kunjungans,nama_tujuan,' . $tujuan->id]
+        ]);
 
-        return back()->with('success', 'Status tujuan kunjungan diperbarui.');
+        $tujuan->update(['nama_tujuan' => $request->nama_tujuan]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tujuan kunjungan berhasil diperbarui.'
+        ]);
     }
 
-    public function destroyTujuan(TujuanKunjungan $tujuan)
+    public function toggleTujuanAjax(TujuanKunjungan $tujuan)
     {
+        $tujuan->update(['aktif' => !$tujuan->aktif]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status tujuan kunjungan diperbarui.',
+            'aktif' => $tujuan->aktif
+        ]);
+    }
+
+    public function destroyTujuanAjax(TujuanKunjungan $tujuan)
+    {
+        if ($tujuan->kunjungans()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tujuan tidak bisa dihapus karena masih digunakan.'
+            ], 422);
+        }
+
         $tujuan->delete();
 
-        return back()->with('success', 'Tujuan kunjungan dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Tujuan kunjungan berhasil dihapus.'
+        ]);
     }
 
-    // ---------- Bidang ----------
-    public function storeBidang(Request $request)
+    // ============================================
+    // BIDANG - AJAX
+    // ============================================
+    public function storeBidangAjax(Request $request)
     {
-        $request->validate(['nama_bidang' => ['required', 'string', 'max:150', 'unique:bidangs,nama_bidang']]);
-        Bidang::create(['nama_bidang' => $request->nama_bidang]);
+        $request->validate([
+            'nama_bidang' => ['required', 'string', 'max:150', 'unique:bidangs,nama_bidang']
+        ]);
 
-        return back()->with('success', 'Bidang berhasil ditambahkan.');
+        $bidang = Bidang::create([
+            'nama_bidang' => $request->nama_bidang,
+            'aktif' => true
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bidang berhasil ditambahkan.',
+            'data' => [
+                'id' => $bidang->id,
+                'nama' => $bidang->nama_bidang,
+                'aktif' => $bidang->aktif
+            ]
+        ]);
     }
 
-    public function toggleBidang(Bidang $bidang)
+    public function updateBidangAjax(Request $request, Bidang $bidang)
     {
-        $bidang->update(['aktif' => ! $bidang->aktif]);
+        $request->validate([
+            'nama_bidang' => ['required', 'string', 'max:150', 'unique:bidangs,nama_bidang,' . $bidang->id]
+        ]);
 
-        return back()->with('success', 'Status bidang diperbarui.');
+        $bidang->update(['nama_bidang' => $request->nama_bidang]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bidang berhasil diperbarui.'
+        ]);
     }
 
-    public function destroyBidang(Bidang $bidang)
+    public function toggleBidangAjax(Bidang $bidang)
     {
+        $bidang->update(['aktif' => !$bidang->aktif]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status bidang diperbarui.',
+            'aktif' => $bidang->aktif
+        ]);
+    }
+
+    public function destroyBidangAjax(Bidang $bidang)
+    {
+        if ($bidang->kunjungans()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bidang tidak bisa dihapus karena masih digunakan.'
+            ], 422);
+        }
+
         $bidang->delete();
 
-        return back()->with('success', 'Bidang dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Bidang berhasil dihapus.'
+        ]);
     }
 }

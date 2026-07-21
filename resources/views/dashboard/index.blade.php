@@ -57,18 +57,21 @@
 
     {{-- GRAFIK TREN & STATUS --}}
     <div class="row g-3 mb-4">
+        {{-- Tren Kunjungan 14 Hari --}}
         <div class="col-lg-8">
             <div class="card card-stat p-3 h-100">
                 <div class="fw-semibold mb-2">Tren Kunjungan 14 Hari Terakhir</div>
-                <div class="chart-wrapper-tall">
+                <div style="position: relative; height: 220px; width: 100%;">
                     <canvas id="chartTren"></canvas>
                 </div>
             </div>
         </div>
+        
+        {{-- Kunjungan Berdasarkan Status --}}
         <div class="col-lg-4">
             <div class="card card-stat p-3 h-100">
                 <div class="fw-semibold mb-2">Kunjungan Berdasarkan Status</div>
-                <div class="chart-wrapper">
+                <div style="position: relative; height: 220px; width: 100%;">
                     <canvas id="chartStatus"></canvas>
                 </div>
             </div>
@@ -80,7 +83,7 @@
         <div class="col-lg-4">
             <div class="card card-stat p-3 h-100">
                 <div class="fw-semibold mb-2">Kunjungan per Instansi</div>
-                <div class="chart-wrapper">
+                <div style="position: relative; height: 200px; width: 100%;">
                     <canvas id="chartInstansi"></canvas>
                 </div>
             </div>
@@ -88,7 +91,7 @@
         <div class="col-lg-4">
             <div class="card card-stat p-3 h-100">
                 <div class="fw-semibold mb-2">Kunjungan per Tujuan</div>
-                <div class="chart-wrapper">
+                <div style="position: relative; height: 200px; width: 100%;">
                     <canvas id="chartTujuan"></canvas>
                 </div>
             </div>
@@ -96,7 +99,7 @@
         <div class="col-lg-4">
             <div class="card card-stat p-3 h-100">
                 <div class="fw-semibold mb-2">Kunjungan per Bidang</div>
-                <div class="chart-wrapper">
+                <div style="position: relative; height: 200px; width: 100%;">
                     <canvas id="chartBidang"></canvas>
                 </div>
             </div>
@@ -161,8 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointBackgroundColor: '#0b3d2e',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 1.5,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
+                    pointRadius: 3,
+                    pointHoverRadius: 5
                 }]
             },
             options: {
@@ -204,6 +207,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    } else {
+        // Jika tidak ada data, tampilkan pesan
+        const chartContainer = document.getElementById('chartTren')?.parentElement;
+        if (chartContainer) {
+            chartContainer.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                    <small>Belum ada data tren kunjungan</small>
+                </div>
+            `;
+        }
     }
 
     // =============================================
@@ -231,27 +244,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 10,
+                            padding: 8,
                             usePointStyle: true,
                             pointStyle: 'circle',
                             font: { size: 10 }
                         }
                     }
                 },
-                cutout: '55%'
+                cutout: '60%'
             }
         });
+    } else {
+        const chartContainer = document.getElementById('chartStatus')?.parentElement;
+        if (chartContainer) {
+            chartContainer.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                    <small>Belum ada data status kunjungan</small>
+                </div>
+            `;
+        }
     }
 
     // =============================================
     // 3. GRAFIK BAR (Instansi, Tujuan, Bidang)
     // =============================================
-    function barChart(id, labels, data, color) {
+    function barChart(id, labels, data, color, label = 'Jumlah') {
         const canvas = document.getElementById(id);
         if (!canvas) return;
         
         if (!labels || labels.length === 0) {
-            canvas.parentElement.innerHTML = '<p class="text-muted text-center small mt-3">Belum ada data</p>';
+            const container = canvas.parentElement;
+            if (container) {
+                container.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <small>Belum ada data</small>
+                    </div>
+                `;
+            }
             return;
         }
 
@@ -260,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Jumlah',
+                    label: label,
                     data: data,
                     backgroundColor: color,
                     borderColor: color,
