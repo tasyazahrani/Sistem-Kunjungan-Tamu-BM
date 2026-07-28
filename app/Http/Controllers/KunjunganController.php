@@ -84,7 +84,7 @@ class KunjunganController extends Controller
     }
 
     /**
-     * Ubah status verifikasi kunjungan.
+     * Ubah status verifikasi kunjungan - AJAX Response
      */
     public function verifikasi(Request $request, Kunjungan $kunjungan)
     {
@@ -106,14 +106,28 @@ class KunjunganController extends Controller
 
         $kunjungan->update($data);
 
-        return back()->with('success', 'Status kunjungan berhasil diperbarui menjadi "' . Kunjungan::STATUS_LABELS[$request->status] . '".');
+        // Reload untuk mendapatkan data terbaru
+        $kunjungan->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status kunjungan berhasil diperbarui menjadi "' . Kunjungan::STATUS_LABELS[$request->status] . '".',
+            'status_label' => $kunjungan->status_label,
+            'status_color' => $kunjungan->status_color,
+        ]);
     }
 
+    /**
+     * Delete kunjungan - AJAX Response
+     */
     public function destroy(Kunjungan $kunjungan)
     {
         $kunjungan->delete();
 
-        return back()->with('success', 'Data kunjungan berhasil dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data kunjungan berhasil dihapus.',
+        ]);
     }
 
     private function validasiKunjungan(Request $request): array

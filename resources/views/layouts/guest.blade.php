@@ -28,6 +28,9 @@
             background: #ffffff;
             color: #212529;
             overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ===== NAVBAR ===== */
@@ -39,6 +42,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
             position: relative;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .navbar-guest .navbar-brand {
@@ -82,6 +86,15 @@
         .navbar-guest .btn-outline-light:hover {
             background: #fff;
             color: var(--primary) !important;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .guest-main {
+            flex: 1;
+            padding: 2rem 1.5rem 3rem;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         /* ===== HERO WITH VIDEO BACKGROUND ===== */
@@ -320,6 +333,8 @@
             background: var(--primary);
             color: #fff;
             padding: 2rem 0 1rem;
+            flex-shrink: 0;
+            margin-top: auto;
         }
 
         .footer-guest a {
@@ -399,6 +414,10 @@
                 min-height: auto;
                 padding: 5rem 0 3rem;
             }
+            .guest-main {
+                padding: 1.5rem 1.2rem 2.5rem;
+                max-width: 100%;
+            }
         }
 
         @media (max-width: 768px) {
@@ -425,6 +444,9 @@
             }
             .hero-video {
                 padding: 4rem 0 2rem;
+            }
+            .guest-main {
+                padding: 1.2rem 1rem 2rem;
             }
         }
 
@@ -453,6 +475,9 @@
             .hero-video {
                 padding: 3rem 0 1.5rem;
                 min-height: auto;
+            }
+            .guest-main {
+                padding: 1rem 0.8rem 1.5rem;
             }
         }
 
@@ -569,8 +594,65 @@
             color: #dc3545;
         }
 
-        /* Responsive form */
+        /* ===== SUCCESS PAGE ===== */
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .bg-success.bg-opacity-10 {
+            background: rgba(25, 135, 84, 0.1) !important;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem 1rem;
+            padding: 0.2rem 0;
+        }
+
+        .info-grid .label {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .info-grid .value {
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .info-grid .label:last-child,
+        .info-grid .value:last-child {
+            border-bottom: none;
+        }
+
         @media (max-width: 576px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.1rem;
+            }
+            .info-grid .label {
+                padding: 0.3rem 0 0.1rem;
+                border-bottom: none;
+            }
+            .info-grid .value {
+                padding: 0 0 0.3rem;
+                text-align: left;
+                border-bottom: 1px solid rgba(0,0,0,0.04);
+            }
+            .info-grid .value:last-child {
+                border-bottom: none;
+            }
+
             .form-control-lg,
             .form-select-lg {
                 font-size: 0.9rem;
@@ -664,7 +746,7 @@
     @endif
 
     {{-- ===== CONTENT ===== --}}
-    <main>
+    <main class="guest-main">
         @yield('content')
     </main>
 

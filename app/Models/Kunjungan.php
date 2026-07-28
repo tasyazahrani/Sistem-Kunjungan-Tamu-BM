@@ -11,6 +11,11 @@ class Kunjungan extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'kode_kunjungan',
         'nama_tamu',
@@ -26,7 +31,6 @@ class Kunjungan extends Model
         'nama_pejabat_dituju',
         'keperluan',
         'status',
-        'rating',
         'catatan_petugas',
         'diverifikasi_oleh',
         'waktu_verifikasi',
@@ -37,55 +41,67 @@ class Kunjungan extends Model
         'ip_pengirim',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'input_manual' => 'boolean',
         'waktu_kunjungan' => 'datetime',
         'waktu_verifikasi' => 'datetime',
         'waktu_selesai' => 'datetime',
         'jumlah_tamu' => 'integer',
-        'rating' => 'integer',
     ];
 
     // ============================================
-    // STATUS CONSTANTS
+    // STATUS CONSTANTS - TANPA DUPLIKAT
     // ============================================
+    
+    /**
+     * Status labels mapping - HANYA 5 STATUS UNIK
+     */
     public const STATUS_LABELS = [
-        'pending' => 'Menunggu Verifikasi',
         'menunggu_verifikasi' => 'Menunggu Verifikasi',
         'disetujui' => 'Disetujui',
         'sedang_berkunjung' => 'Sedang Berkunjung',
         'selesai' => 'Selesai',
         'ditolak' => 'Ditolak',
-        'verified' => 'Terverifikasi',
-        'rejected' => 'Ditolak',
     ];
 
+    /**
+     * Status colors mapping
+     */
     public const STATUS_COLORS = [
-        'pending' => 'warning',
         'menunggu_verifikasi' => 'warning',
         'disetujui' => 'info',
         'sedang_berkunjung' => 'primary',
         'selesai' => 'success',
         'ditolak' => 'danger',
-        'verified' => 'success',
-        'rejected' => 'danger',
     ];
 
-    // Status yang bisa diedit
-    public const EDITABLE_STATUSES = ['pending', 'menunggu_verifikasi'];
+    /**
+     * Status yang bisa diedit
+     */
+    public const EDITABLE_STATUSES = ['menunggu_verifikasi'];
 
-    // Status yang bisa diverifikasi
-    public const VERIFIABLE_STATUSES = ['pending', 'menunggu_verifikasi'];
+    /**
+     * Status yang bisa diverifikasi
+     */
+    public const VERIFIABLE_STATUSES = ['menunggu_verifikasi'];
 
-    // Status yang bisa dihapus
-    public const DELETABLE_STATUSES = ['pending', 'menunggu_verifikasi', 'ditolak', 'rejected'];
+    /**
+     * Status yang bisa dihapus
+     */
+    public const DELETABLE_STATUSES = ['menunggu_verifikasi', 'ditolak'];
 
     // ============================================
     // BOOT METHOD
     // ============================================
+    
     protected static function booted(): void
     {
-        static::creating(function (Kunjungan $kunjungan) {
+        static::creating(function (self $kunjungan) {
             // Generate kode kunjungan
             if (empty($kunjungan->kode_kunjungan)) {
                 $kunjungan->kode_kunjungan = 'KJG-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
@@ -98,31 +114,19 @@ class Kunjungan extends Model
             
             // Set default status
             if (empty($kunjungan->status)) {
-                $kunjungan->status = 'pending';
-            }
-            
-            // Set default rating
-            if (!isset($kunjungan->rating)) {
-                $kunjungan->rating = null;
+                $kunjungan->status = 'menunggu_verifikasi';
             }
         });
 
-        static::created(function (Kunjungan $kunjungan) {
+        static::created(function (self $kunjungan) {
             // Trigger notifikasi kunjungan baru
             NotificationHelper::kunjunganBaru($kunjungan);
         });
 
-        static::updating(function (Kunjungan $kunjungan) {
-            // Jika status berubah menjadi selesai dan rating null, set default 5
-            if ($kunjungan->status === 'selesai' && is_null($kunjungan->rating)) {
-                $kunjungan->rating = 5;
-            }
-        });
-
-        static::updated(function (Kunjungan $kunjungan) {
+        static::updated(function (self $kunjungan) {
             // Trigger notifikasi perubahan status
             if ($kunjungan->wasChanged('status')) {
-                $oldStatus = $kunjungan->getOriginal('status') ?? 'pending';
+                $oldStatus = $kunjungan->getOriginal('status') ?? 'menunggu_verifikasi';
                 $newStatus = $kunjungan->status;
                 
                 $oldLabel = self::STATUS_LABELS[$oldStatus] ?? $oldStatus;
@@ -135,22 +139,13 @@ class Kunjungan extends Model
                     NotificationHelper::kunjunganSelesai($kunjungan);
                 }
             }
-
-            // Trigger notifikasi rating baru
-            if ($kunjungan->wasChanged('rating') && !is_null($kunjungan->rating)) {
-                NotificationHelper::ratingBaru($kunjungan);
-            }
-        });
-
-        static::deleted(function (Kunjungan $kunjungan) {
-            // Hapus notifikasi terkait jika diperlukan
-            // Notification::where('data->kunjungan_id', $kunjungan->id)->delete();
         });
     }
 
     // ============================================
     // RELATIONSHIPS
     // ============================================
+    
     public function instansi()
     {
         return $this->belongsTo(Instansi::class);
@@ -181,7 +176,7 @@ class Kunjungan extends Model
     // ============================================
 
     /**
-     * Status Label dengan fallback
+     * Get status label with fallback
      */
     public function getStatusLabelAttribute(): string
     {
@@ -189,7 +184,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Status Color dengan fallback
+     * Get status color with fallback
      */
     public function getStatusColorAttribute(): string
     {
@@ -197,7 +192,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Nama Instansi
+     * Get nama instansi
      */
     public function getNamaInstansiAttribute(): string
     {
@@ -205,7 +200,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Nama Tujuan
+     * Get nama tujuan
      */
     public function getNamaTujuanAttribute(): string
     {
@@ -213,7 +208,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Nama Bidang
+     * Get nama bidang
      */
     public function getNamaBidangAttribute(): string
     {
@@ -221,34 +216,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Rating dengan bintang
-     */
-    public function getRatingStarsAttribute(): string
-    {
-        if (is_null($this->rating) || $this->rating < 1 || $this->rating > 5) {
-            return '';
-        }
-        
-        $stars = '';
-        for ($i = 1; $i <= 5; $i++) {
-            $stars .= ($i <= $this->rating) ? '⭐' : '☆';
-        }
-        return $stars;
-    }
-
-    /**
-     * Rating dalam persentase
-     */
-    public function getRatingPercentAttribute(): int
-    {
-        if (is_null($this->rating)) {
-            return 0;
-        }
-        return round(($this->rating / 5) * 100);
-    }
-
-    /**
-     * Waktu kunjungan formatted
+     * Get formatted waktu kunjungan
      */
     public function getWaktuKunjunganFormattedAttribute(): string
     {
@@ -256,7 +224,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Waktu verifikasi formatted
+     * Get formatted waktu verifikasi
      */
     public function getWaktuVerifikasiFormattedAttribute(): string
     {
@@ -264,7 +232,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Waktu selesai formatted
+     * Get formatted waktu selesai
      */
     public function getWaktuSelesaiFormattedAttribute(): string
     {
@@ -276,23 +244,23 @@ class Kunjungan extends Model
     // ============================================
 
     /**
-     * Data yang sudah diverifikasi (tidak pending)
+     * Scope for already verified data (not pending)
      */
     public function scopeSudahDiverifikasi($query)
     {
-        return $query->whereNotIn('status', ['pending', 'menunggu_verifikasi']);
+        return $query->whereNotIn('status', ['menunggu_verifikasi']);
     }
 
     /**
-     * Data yang masih pending
+     * Scope for pending data
      */
     public function scopePending($query)
     {
-        return $query->whereIn('status', ['pending', 'menunggu_verifikasi']);
+        return $query->where('status', 'menunggu_verifikasi');
     }
 
     /**
-     * Data yang sudah selesai
+     * Scope for completed data
      */
     public function scopeSelesai($query)
     {
@@ -300,23 +268,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Data dengan rating tinggi (4-5)
-     */
-    public function scopeRatingTinggi($query)
-    {
-        return $query->where('rating', '>=', 4);
-    }
-
-    /**
-     * Data dengan rating rendah (1-2)
-     */
-    public function scopeRatingRendah($query)
-    {
-        return $query->where('rating', '<=', 2);
-    }
-
-    /**
-     * Data berdasarkan rentang tanggal
+     * Scope for date range
      */
     public function scopeDateRange($query, $startDate, $endDate)
     {
@@ -324,7 +276,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Filter berdasarkan berbagai parameter
+     * Scope for filtering
      */
     public function scopeFilter($query, array $filters)
     {
@@ -347,9 +299,6 @@ class Kunjungan extends Model
             ->when($filters['bidang_id'] ?? null, function ($q, $v) {
                 return $q->where('bidang_id', $v);
             })
-            ->when($filters['rating'] ?? null, function ($q, $v) {
-                return $q->where('rating', $v);
-            })
             ->when($filters['cari'] ?? null, function ($q, $v) {
                 return $q->where(function ($qq) use ($v) {
                     $qq->where('nama_tamu', 'like', "%{$v}%")
@@ -364,7 +313,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Scope untuk laporan berdasarkan rentang tanggal
+     * Scope for report by date range
      */
     public function scopeForLaporan($query, $startDate, $endDate)
     {
@@ -376,7 +325,7 @@ class Kunjungan extends Model
     // ============================================
 
     /**
-     * Cek apakah kunjungan bisa diedit
+     * Check if can edit
      */
     public function getCanEditAttribute(): bool
     {
@@ -384,7 +333,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Cek apakah kunjungan bisa diverifikasi
+     * Check if can verify
      */
     public function getCanVerifyAttribute(): bool
     {
@@ -392,7 +341,7 @@ class Kunjungan extends Model
     }
 
     /**
-     * Cek apakah kunjungan bisa dihapus
+     * Check if can delete
      */
     public function getCanDeleteAttribute(): bool
     {
@@ -400,25 +349,9 @@ class Kunjungan extends Model
     }
 
     /**
-     * Cek apakah kunjungan bisa diberi rating
+     * Verify kunjungan
      */
-    public function getCanRateAttribute(): bool
-    {
-        return $this->status === 'selesai' && is_null($this->rating);
-    }
-
-    /**
-     * Cek apakah sudah diberi rating
-     */
-    public function getHasRatingAttribute(): bool
-    {
-        return !is_null($this->rating) && $this->rating >= 1 && $this->rating <= 5;
-    }
-
-    /**
-     * Verifikasi kunjungan
-     */
-    public function verify($userId, $status = 'disetujui')
+    public function verify($userId, $status = 'disetujui'): void
     {
         $this->update([
             'status' => $status,
@@ -428,9 +361,9 @@ class Kunjungan extends Model
     }
 
     /**
-     * Selesaikan kunjungan
+     * Complete kunjungan
      */
-    public function complete()
+    public function complete(): void
     {
         $this->update([
             'status' => 'selesai',
@@ -439,56 +372,18 @@ class Kunjungan extends Model
     }
 
     /**
-     * Batalkan kunjungan
+     * Cancel kunjungan
      */
-    public function cancel()
+    public function cancel(): void
     {
         $this->update([
             'status' => 'ditolak',
         ]);
     }
 
-    /**
-     * Beri rating
-     */
-    public function rate($rating)
-    {
-        $this->update([
-            'rating' => $rating,
-        ]);
-    }
-
     // ============================================
     // STATISTICS HELPERS
     // ============================================
-
-    /**
-     * Get average rating
-     */
-    public static function getAverageRating(): float
-    {
-        return round(static::whereNotNull('rating')->avg('rating') ?? 0, 1);
-    }
-
-    /**
-     * Get total with rating
-     */
-    public static function getTotalWithRating(): int
-    {
-        return static::whereNotNull('rating')->count();
-    }
-
-    /**
-     * Get rating distribution
-     */
-    public static function getRatingDistribution(): array
-    {
-        $distribution = [];
-        for ($i = 1; $i <= 5; $i++) {
-            $distribution[$i] = static::where('rating', $i)->count();
-        }
-        return $distribution;
-    }
 
     /**
      * Get status distribution

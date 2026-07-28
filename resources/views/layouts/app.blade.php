@@ -299,6 +299,27 @@
         }
 
         /* ============================================ */
+        /* AJAX BUTTON LOADING STATE                    */
+        /* ============================================ */
+        .btn-loading {
+            pointer-events: none !important;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-loading .btn-text {
+            visibility: hidden;
+        }
+
+        .btn-loading .spinner-border-sm {
+            display: inline-block !important;
+        }
+
+        .btn .spinner-border-sm {
+            display: none;
+        }
+
+        /* ============================================ */
         /* CARDS                                        */
         /* ============================================ */
         .card-stat {
@@ -871,6 +892,120 @@
 
             return fetch(url, { ...defaults, ...options });
         };
+
+        // ============================================
+        // AJAX BUTTON HANDLER - TANPA RELOAD
+        // ============================================
+        document.addEventListener('click', function(e) {
+            // Cari tombol AJAX
+            const btn = e.target.closest('.btn-ajax, [data-ajax="true"]');
+            if (!btn) return;
+            
+            // Cegah default
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Ambil data dari tombol
+            const url = btn.getAttribute('data-url') || btn.getAttribute('action') || btn.href;
+            const method = btn.getAttribute('data-method') || 'POST';
+            const confirmMsg = btn.getAttribute('data-confirm');
+            const reload = btn.getAttribute('data-reload') === 'true';
+            const targetId = btn.getAttribute('data-target');
+            
+            // Konfirmasi jika ada
+            if (confirmMsg && !confirm(confirmMsg)) return;
+            
+            // Simpan HTML asli
+            const originalHtml = btn.innerHTML;
+            const originalClass = btn.className;
+            
+            // Tampilkan loading
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...';
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            
+            // Kirim request
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: method !== 'GET' ? JSON.stringify({}) : null,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Kembalikan tombol
+                btn.innerHTML = originalHtml;
+                btn.className = originalClass;
+                btn.disabled = false;
+                
+                if (data.success) {
+                    if (window.showToast) {
+                        window.showToast(data.message || 'Berhasil!', 'success');
+                    }
+                    
+                    // Update target element jika ada
+                    if (targetId) {
+                        const target = document.getElementById(targetId);
+                        if (target) {
+                            if (target.classList.contains('badge') || target.classList.contains('notif-badge')) {
+                                target.textContent = data.count || 0;
+                            } else {
+                                // Reload konten target via AJAX
+                                fetchTargetContent(targetId);
+                            }
+                        }
+                    }
+                    
+                    // Trigger event custom
+                    document.dispatchEvent(new CustomEvent('ajax:success', { 
+                        detail: { data, btn, targetId } 
+                    }));
+                    
+                    // Reload halaman jika diperlukan
+                    if (reload) {
+                        setTimeout(() => window.location.reload(), 1500);
+                    }
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message || 'Gagal!', 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                btn.innerHTML = originalHtml;
+                btn.className = originalClass;
+                btn.disabled = false;
+                if (window.showToast) {
+                    window.showToast('Terjadi kesalahan pada server.', 'error');
+                }
+                console.error('AJAX Error:', error);
+            });
+        });
+
+        // Fungsi untuk fetch target content
+        function fetchTargetContent(targetId) {
+            const target = document.getElementById(targetId);
+            if (!target) return;
+            
+            const url = target.getAttribute('data-url') || window.location.href;
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    target.innerHTML = data.html;
+                }
+            })
+            .catch(error => console.error('Error fetching target:', error));
+        }
 
         // ============================================
         // NOTIFICATION SYSTEM

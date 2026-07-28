@@ -148,16 +148,28 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // ============================================
-    // VARIABLES
+    // CSRF TOKEN
     // ============================================
-    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-    const editForm = document.getElementById('editForm');
-    const editInput = document.getElementById('editInput');
-    const editModalTitle = document.getElementById('editModalTitle');
-    const editModalLabel = document.getElementById('editModalLabel');
-    
-    let editType = '';
-    let editId = '';
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    // ============================================
+    // TOAST & LOADING
+    // ============================================
+    function showToast(message, type = 'success') {
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showLoading(show) {
+        if (window.showLoading) {
+            window.showLoading(show);
+        }
+    }
 
     // ============================================
     // HELPER: Get List Element
@@ -199,10 +211,216 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ============================================
-    // CREATE (Tambah)
+    // EVENT DELEGATION - Toggle
+    // ============================================
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.toggle-btn');
+        if (!btn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const li = btn.closest('li');
+        const span = li.querySelector('span');
+        
+        const originalText = btn.textContent;
+        btn.textContent = '...';
+        btn.disabled = true;
+        
+        showLoading(true);
+        
+        fetch(getRoute(type, 'toggle', id), {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': getCsrfToken(),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            showLoading(false);
+            
+            if (data.success) {
+                if (data.aktif) {
+                    span.classList.remove('text-muted', 'text-decoration-line-through');
+                    btn.textContent = 'Nonaktifkan';
+                } else {
+                    span.classList.add('text-muted', 'text-decoration-line-through');
+                    btn.textContent = 'Aktifkan';
+                }
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'Gagal mengubah status.', 'error');
+            }
+        })
+        .catch(error => {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            showLoading(false);
+            showToast('Terjadi kesalahan pada server.', 'error');
+            console.error('Error:', error);
+        });
+    });
+
+    // ============================================
+    // EVENT DELEGATION - Delete
+    // ============================================
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.delete-btn');
+        if (!btn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const li = btn.closest('li');
+        
+        if (!confirm('Yakin ingin menghapus data ini?')) return;
+        
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        btn.disabled = true;
+        
+        showLoading(true);
+        
+        fetch(getRoute(type, 'delete', id), {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': getCsrfToken(),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            showLoading(false);
+            
+            if (data.success) {
+                li.remove();
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'Gagal menghapus data.', 'error');
+            }
+        })
+        .catch(error => {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            showLoading(false);
+            showToast('Terjadi kesalahan pada server.', 'error');
+            console.error('Error:', error);
+        });
+    });
+
+    // ============================================
+    // EVENT DELEGATION - Edit (Open Modal)
+    // ============================================
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.edit-btn');
+        if (!btn) return;
+        
+        e.preventDefault();
+        
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        
+        const labels = {
+            'instansi': 'Nama Instansi',
+            'tujuan': 'Nama Tujuan',
+            'bidang': 'Nama Bidang'
+        };
+        
+        document.getElementById('editModalTitle').textContent = 'Edit ' + (labels[type] || '');
+        document.getElementById('editModalLabel').textContent = labels[type] || 'Nama';
+        document.getElementById('editInput').value = name;
+        document.getElementById('editForm').action = getRoute(type, 'update', id);
+        document.getElementById('editForm').dataset.type = type;
+        document.getElementById('editForm').dataset.id = id;
+        
+        const modal = new bootstrap.Modal(document.getElementById('editModal'));
+        modal.show();
+    });
+
+    // ============================================
+    // EDIT - Submit
+    // ============================================
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const type = this.dataset.type;
+        const id = this.dataset.id;
+        const name = document.getElementById('editInput').value.trim();
+        
+        if (!name) return;
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Menyimpan...';
+        submitBtn.disabled = true;
+        
+        showLoading(true);
+        
+        fetch(getRoute(type, 'update', id), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': getCsrfToken(),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                _method: 'PUT',
+                ['nama_' + type]: name 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            showLoading(false);
+            
+            if (data.success) {
+                const list = getList(type);
+                const items = list.querySelectorAll('li');
+                items.forEach(item => {
+                    if (item.dataset.id == id) {
+                        const span = item.querySelector('span');
+                        span.textContent = name;
+                        // Update juga data-name di edit-btn
+                        const editBtn = item.querySelector('.edit-btn');
+                        if (editBtn) editBtn.dataset.name = name;
+                    }
+                });
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                if (modal) modal.hide();
+                
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'Gagal mengupdate data.', 'error');
+            }
+        })
+        .catch(error => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            showLoading(false);
+            showToast('Terjadi kesalahan pada server.', 'error');
+            console.error('Error:', error);
+        });
+    });
+
+    // ============================================
+    // CREATE (Tambah) - AJAX
     // ============================================
     document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const type = this.dataset.type;
@@ -211,15 +429,27 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!name) return;
             
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            submitBtn.disabled = true;
+            
             showLoading(true);
             
-            try {
-                const response = await fetchAjax(getRoute(type, 'store'), {
-                    method: 'POST',
-                    body: JSON.stringify({ ['nama_' + type]: name })
-                });
-                
-                const data = await response.json();
+            fetch(getRoute(type, 'store'), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ['nama_' + type]: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.innerHTML = originalHtml;
+                submitBtn.disabled = false;
+                showLoading(false);
                 
                 if (data.success) {
                     const list = getList(type);
@@ -230,11 +460,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     showToast(data.message || 'Gagal menambahkan data.', 'error');
                 }
-            } catch (error) {
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalHtml;
+                submitBtn.disabled = false;
+                showLoading(false);
                 showToast('Terjadi kesalahan pada server.', 'error');
-            }
-            
-            showLoading(false);
+                console.error('Error:', error);
+            });
         });
     });
 
@@ -253,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const div = document.createElement('div');
         div.className = 'd-flex gap-1';
         
-        // Edit button
+        // Edit button - TIDAK PERLU attach event lagi karena event delegation
         const editBtn = document.createElement('button');
         editBtn.className = 'btn btn-sm btn-outline-primary edit-btn';
         editBtn.dataset.type = type;
@@ -261,14 +494,14 @@ document.addEventListener('DOMContentLoaded', function() {
         editBtn.dataset.name = data.nama;
         editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
         
-        // Toggle button
+        // Toggle button - TIDAK PERLU attach event lagi karena event delegation
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'btn btn-sm btn-outline-secondary toggle-btn';
         toggleBtn.dataset.type = type;
         toggleBtn.dataset.id = data.id;
         toggleBtn.textContent = data.aktif ? 'Nonaktifkan' : 'Aktifkan';
         
-        // Delete button
+        // Delete button - TIDAK PERLU attach event lagi karena event delegation
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn btn-sm btn-outline-danger delete-btn';
         deleteBtn.dataset.type = type;
@@ -282,183 +515,17 @@ document.addEventListener('DOMContentLoaded', function() {
         li.appendChild(nameSpan);
         li.appendChild(div);
         
-        // Attach events
-        editBtn.addEventListener('click', openEditModal);
-        toggleBtn.addEventListener('click', handleToggle);
-        deleteBtn.addEventListener('click', handleDelete);
-        
         return li;
-    }
-
-    // ============================================
-    // EDIT - Open Modal
-    // ============================================
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', openEditModal);
-    });
-
-    function openEditModal(e) {
-        const btn = e.currentTarget;
-        editType = btn.dataset.type;
-        editId = btn.dataset.id;
-        const name = btn.dataset.name;
-        
-        const labels = {
-            'instansi': 'Nama Instansi',
-            'tujuan': 'Nama Tujuan',
-            'bidang': 'Nama Bidang'
-        };
-        
-        editModalTitle.textContent = 'Edit ' + (labels[editType] || '');
-        editModalLabel.textContent = labels[editType] || 'Nama';
-        editInput.value = name;
-        editForm.action = getRoute(editType, 'update', editId);
-        editModal.show();
-    }
-
-    // ============================================
-    // EDIT - Submit
-    // ============================================
-    editForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const name = editInput.value.trim();
-        if (!name) return;
-        
-        showLoading(true);
-        
-        try {
-            const response = await fetchAjax(this.action, {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    _method: 'PUT',
-                    ['nama_' + editType]: name 
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                const list = getList(editType);
-                const items = list.querySelectorAll('li');
-                items.forEach(item => {
-                    if (item.dataset.id == editId) {
-                        const span = item.querySelector('span');
-                        span.textContent = name;
-                    }
-                });
-                editModal.hide();
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message || 'Gagal mengupdate data.', 'error');
-            }
-        } catch (error) {
-            showToast('Terjadi kesalahan pada server.', 'error');
-        }
-        
-        showLoading(false);
-    });
-
-    // ============================================
-    // TOGGLE (Aktif/Nonaktif)
-    // ============================================
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-        btn.addEventListener('click', handleToggle);
-    });
-
-    async function handleToggle(e) {
-        const btn = e.currentTarget;
-        const type = btn.dataset.type;
-        const id = btn.dataset.id;
-        
-        showLoading(true);
-        
-        try {
-            const response = await fetchAjax(getRoute(type, 'toggle', id), {
-                method: 'POST',
-                body: JSON.stringify({ _method: 'PATCH' })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                const list = getList(type);
-                const items = list.querySelectorAll('li');
-                items.forEach(item => {
-                    if (item.dataset.id == id) {
-                        const span = item.querySelector('span');
-                        const toggleBtn = item.querySelector('.toggle-btn');
-                        if (data.aktif) {
-                            span.classList.remove('text-muted', 'text-decoration-line-through');
-                            toggleBtn.textContent = 'Nonaktifkan';
-                        } else {
-                            span.classList.add('text-muted', 'text-decoration-line-through');
-                            toggleBtn.textContent = 'Aktifkan';
-                        }
-                    }
-                });
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message || 'Gagal mengubah status.', 'error');
-            }
-        } catch (error) {
-            showToast('Terjadi kesalahan pada server.', 'error');
-        }
-        
-        showLoading(false);
-    }
-
-    // ============================================
-    // DELETE
-    // ============================================
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', handleDelete);
-    });
-
-    async function handleDelete(e) {
-        const btn = e.currentTarget;
-        const type = btn.dataset.type;
-        const id = btn.dataset.id;
-        
-        if (!confirm('Yakin ingin menghapus data ini?')) return;
-        
-        showLoading(true);
-        
-        try {
-            const response = await fetchAjax(getRoute(type, 'delete', id), {
-                method: 'POST',
-                body: JSON.stringify({ _method: 'DELETE' })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                const list = getList(type);
-                const items = list.querySelectorAll('li');
-                items.forEach(item => {
-                    if (item.dataset.id == id) {
-                        item.remove();
-                    }
-                });
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message || 'Gagal menghapus data.', 'error');
-            }
-        } catch (error) {
-            showToast('Terjadi kesalahan pada server.', 'error');
-        }
-        
-        showLoading(false);
     }
 
     // ============================================
     // MODAL - Reset saat ditutup
     // ============================================
     document.getElementById('editModal').addEventListener('hidden.bs.modal', function() {
-        editForm.action = '';
-        editInput.value = '';
-        editType = '';
-        editId = '';
+        document.getElementById('editForm').action = '';
+        document.getElementById('editForm').dataset.type = '';
+        document.getElementById('editForm').dataset.id = '';
+        document.getElementById('editInput').value = '';
     });
 });
 </script>
