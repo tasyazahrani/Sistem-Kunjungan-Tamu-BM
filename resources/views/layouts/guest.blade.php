@@ -91,8 +91,7 @@
         /* ===== MAIN CONTENT ===== */
         .guest-main {
             flex: 1;
-            padding: 2rem 1.5rem 3rem;
-            max-width: 900px;
+            max-width: 100%;
             margin: 0 auto;
             width: 100%;
         }
