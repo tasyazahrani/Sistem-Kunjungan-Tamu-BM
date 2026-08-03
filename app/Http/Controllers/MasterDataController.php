@@ -18,9 +18,7 @@ class MasterDataController extends Controller
         return view('master.index', compact('instansis', 'tujuans', 'bidangs'));
     }
 
-    // ============================================
     // INSTANSI - AJAX
-    // ============================================
     public function storeInstansiAjax(Request $request)
     {
         $request->validate([
@@ -85,9 +83,7 @@ class MasterDataController extends Controller
         ]);
     }
 
-    // ============================================
     // TUJUAN - AJAX
-    // ============================================
     public function storeTujuanAjax(Request $request)
     {
         $request->validate([
@@ -152,9 +148,7 @@ class MasterDataController extends Controller
         ]);
     }
 
-    // ============================================
     // BIDANG - AJAX
-    // ============================================
     public function storeBidangAjax(Request $request)
     {
         $request->validate([

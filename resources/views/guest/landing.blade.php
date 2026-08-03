@@ -5,9 +5,7 @@
 
 @section('content')
 
-{{-- ============================================ --}}
 {{-- HERO SECTION WITH VIDEO BACKGROUND          --}}
-{{-- ============================================ --}}
 <section class="hero-video">
     {{-- Video Background - TANPA WATERMARK --}}
     <div class="hero-video-wrapper">
@@ -75,9 +73,7 @@
     </div>
 </section>
 
-{{-- ============================================ --}}
 {{-- STATISTIK SECTION                           --}}
-{{-- ============================================ --}}
 <section id="statistik" class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5">
@@ -133,9 +129,7 @@
     </div>
 </section>
 
-{{-- ============================================ --}}
 {{-- TREN SECTION                                --}}
-{{-- ============================================ --}}
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row align-items-center g-5">
@@ -162,9 +156,7 @@
     </div>
 </section>
 
-{{-- ============================================ --}}
 {{-- FITUR SECTION                               --}}
-{{-- ============================================ --}}
 <section id="fitur" class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5">
@@ -197,9 +189,7 @@
     </div>
 </section>
 
-{{-- ============================================ --}}
 {{-- CTA SECTION                                 --}}
-{{-- ============================================ --}}
 <section class="cta-section">
     <div class="container">
         <h2>Siap Memantau Kunjungan Anda?</h2>

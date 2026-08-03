@@ -140,16 +140,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ============================================
     // CSRF TOKEN
-    // ============================================
     function getCsrfToken() {
         return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     }
 
-    // ============================================
     // TOAST NOTIFICATION
-    // ============================================
     function showToast(message, type = 'success') {
         if (window.showToast) {
             window.showToast(message, type);
@@ -158,9 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ============================================
     // OPEN VERIFY MODAL
-    // ============================================
     document.querySelectorAll('.verif-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -184,9 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // VERIFY FORM - AJAX SUBMIT
-    // ============================================
     document.getElementById('verifForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -242,9 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // DELETE - AJAX (Opsional)
-    // ============================================
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();

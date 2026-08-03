@@ -11,11 +11,6 @@ class Kunjungan extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'kode_kunjungan',
         'nama_tamu',
@@ -41,11 +36,6 @@ class Kunjungan extends Model
         'ip_pengirim',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'input_manual' => 'boolean',
         'waktu_kunjungan' => 'datetime',
@@ -54,13 +44,8 @@ class Kunjungan extends Model
         'jumlah_tamu' => 'integer',
     ];
 
-    // ============================================
     // STATUS CONSTANTS - TANPA DUPLIKAT
-    // ============================================
-    
-    /**
-     * Status labels mapping - HANYA 5 STATUS UNIK
-     */
+    // Status labels mapping - HANYA 5 STATUS UNIK
     public const STATUS_LABELS = [
         'menunggu_verifikasi' => 'Menunggu Verifikasi',
         'disetujui' => 'Disetujui',
@@ -69,9 +54,7 @@ class Kunjungan extends Model
         'ditolak' => 'Ditolak',
     ];
 
-    /**
-     * Status colors mapping
-     */
+    // Status colors mapping
     public const STATUS_COLORS = [
         'menunggu_verifikasi' => 'warning',
         'disetujui' => 'info',
@@ -80,25 +63,16 @@ class Kunjungan extends Model
         'ditolak' => 'danger',
     ];
 
-    /**
-     * Status yang bisa diedit
-     */
+    // Status yang bisa diedit
     public const EDITABLE_STATUSES = ['menunggu_verifikasi'];
 
-    /**
-     * Status yang bisa diverifikasi
-     */
+    // Status yang bisa diverifikasi
     public const VERIFIABLE_STATUSES = ['menunggu_verifikasi'];
 
-    /**
-     * Status yang bisa dihapus
-     */
+    // Status yang bisa dihapus
     public const DELETABLE_STATUSES = ['menunggu_verifikasi', 'ditolak'];
 
-    // ============================================
     // BOOT METHOD
-    // ============================================
-    
     protected static function booted(): void
     {
         static::creating(function (self $kunjungan) {
@@ -142,10 +116,7 @@ class Kunjungan extends Model
         });
     }
 
-    // ============================================
     // RELATIONSHIPS
-    // ============================================
-    
     public function instansi()
     {
         return $this->belongsTo(Instansi::class);
@@ -171,113 +142,68 @@ class Kunjungan extends Model
         return $this->belongsTo(User::class, 'diinput_oleh');
     }
 
-    // ============================================
     // ACCESSORS
-    // ============================================
-
-    /**
-     * Get status label with fallback
-     */
     public function getStatusLabelAttribute(): string
     {
         return self::STATUS_LABELS[$this->status] ?? ucfirst(str_replace('_', ' ', $this->status));
     }
 
-    /**
-     * Get status color with fallback
-     */
     public function getStatusColorAttribute(): string
     {
         return self::STATUS_COLORS[$this->status] ?? 'secondary';
     }
 
-    /**
-     * Get nama instansi
-     */
     public function getNamaInstansiAttribute(): string
     {
         return $this->instansi->nama_instansi ?? ($this->instansi_lainnya ?: '-');
     }
 
-    /**
-     * Get nama tujuan
-     */
     public function getNamaTujuanAttribute(): string
     {
         return $this->tujuanKunjungan->nama_tujuan ?? ($this->tujuan_lainnya ?: '-');
     }
 
-    /**
-     * Get nama bidang
-     */
     public function getNamaBidangAttribute(): string
     {
         return $this->bidang->nama_bidang ?? '-';
     }
 
-    /**
-     * Get formatted waktu kunjungan
-     */
     public function getWaktuKunjunganFormattedAttribute(): string
     {
         return $this->waktu_kunjungan ? $this->waktu_kunjungan->format('d-m-Y H:i') : '-';
     }
 
-    /**
-     * Get formatted waktu verifikasi
-     */
     public function getWaktuVerifikasiFormattedAttribute(): string
     {
         return $this->waktu_verifikasi ? $this->waktu_verifikasi->format('d-m-Y H:i') : '-';
     }
 
-    /**
-     * Get formatted waktu selesai
-     */
     public function getWaktuSelesaiFormattedAttribute(): string
     {
         return $this->waktu_selesai ? $this->waktu_selesai->format('d-m-Y H:i') : '-';
     }
 
-    // ============================================
     // SCOPES
-    // ============================================
-
-    /**
-     * Scope for already verified data (not pending)
-     */
     public function scopeSudahDiverifikasi($query)
     {
         return $query->whereNotIn('status', ['menunggu_verifikasi']);
     }
 
-    /**
-     * Scope for pending data
-     */
     public function scopePending($query)
     {
         return $query->where('status', 'menunggu_verifikasi');
     }
 
-    /**
-     * Scope for completed data
-     */
     public function scopeSelesai($query)
     {
         return $query->where('status', 'selesai');
     }
 
-    /**
-     * Scope for date range
-     */
     public function scopeDateRange($query, $startDate, $endDate)
     {
         return $query->whereBetween('waktu_kunjungan', [$startDate, $endDate]);
     }
 
-    /**
-     * Scope for filtering
-     */
     public function scopeFilter($query, array $filters)
     {
         return $query
@@ -312,45 +238,28 @@ class Kunjungan extends Model
             });
     }
 
-    /**
-     * Scope for report by date range
-     */
     public function scopeForLaporan($query, $startDate, $endDate)
     {
         return $query->whereBetween('waktu_kunjungan', [$startDate, $endDate]);
     }
 
-    // ============================================
     // HELPER METHODS
-    // ============================================
-
-    /**
-     * Check if can edit
-     */
     public function getCanEditAttribute(): bool
     {
         return in_array($this->status, self::EDITABLE_STATUSES);
     }
 
-    /**
-     * Check if can verify
-     */
     public function getCanVerifyAttribute(): bool
     {
         return in_array($this->status, self::VERIFIABLE_STATUSES);
     }
 
-    /**
-     * Check if can delete
-     */
     public function getCanDeleteAttribute(): bool
     {
         return in_array($this->status, self::DELETABLE_STATUSES);
     }
 
-    /**
-     * Verify kunjungan
-     */
+    // Verify kunjungan
     public function verify($userId, $status = 'disetujui'): void
     {
         $this->update([
@@ -360,9 +269,7 @@ class Kunjungan extends Model
         ]);
     }
 
-    /**
-     * Complete kunjungan
-     */
+    // Complete kunjungan
     public function complete(): void
     {
         $this->update([
@@ -371,9 +278,7 @@ class Kunjungan extends Model
         ]);
     }
 
-    /**
-     * Cancel kunjungan
-     */
+    // Cancel kunjungan
     public function cancel(): void
     {
         $this->update([
@@ -381,13 +286,7 @@ class Kunjungan extends Model
         ]);
     }
 
-    // ============================================
     // STATISTICS HELPERS
-    // ============================================
-
-    /**
-     * Get status distribution
-     */
     public static function getStatusDistribution(): array
     {
         $distribution = [];
@@ -397,9 +296,6 @@ class Kunjungan extends Model
         return $distribution;
     }
 
-    /**
-     * Get daily statistics for chart
-     */
     public static function getDailyStats($days = 14)
     {
         return static::selectRaw('DATE(waktu_kunjungan) as tanggal, COUNT(*) as jumlah')
@@ -409,9 +305,6 @@ class Kunjungan extends Model
             ->get();
     }
 
-    /**
-     * Get monthly statistics
-     */
     public static function getMonthlyStats($year = null, $month = null)
     {
         $year = $year ?? now()->year;

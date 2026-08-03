@@ -667,7 +667,7 @@
     <nav class="sidebar" id="sidebar">
         <div class="brand">
             SIMANTAP
-            <small>Sekda Kabupaten Bener Meriah</small>
+            <small>Setda Kabupaten Bener Meriah</small>
         </div>
         <div class="p-2">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -716,9 +716,7 @@
             
             @auth
             <div class="d-flex align-items-center gap-3">
-                {{-- ============================================ --}}
                 {{-- NOTIFICATION DROPDOWN                       --}}
-                {{-- ============================================ --}}
                 <div class="dropdown">
                     <button class="notif-btn" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-bell"></i>
@@ -764,7 +762,7 @@
 
         {{-- FOOTER --}}
         <footer class="text-center text-muted py-3 border-top bg-white small">
-            &copy; {{ date('Y') }} SIMANTAP - Sekda Kabupaten Bener Meriah
+            &copy; {{ date('Y') }} SIMANTAP - Setda Kabupaten Bener Meriah
         </footer>
     </div>
 </div>
@@ -775,9 +773,7 @@
 {{-- Global Script --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ============================================
         // SIDEBAR TOGGLE
-        // ============================================
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         const toggleBtn = document.getElementById('sidebarToggle');
@@ -804,9 +800,7 @@
             }
         });
 
-        // ============================================
         // TOAST NOTIFICATION
-        // ============================================
         window.showToast = function(message, type = 'success', title = null) {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -860,9 +854,7 @@
             });
         };
 
-        // ============================================
         // LOADING SPINNER
-        // ============================================
         window.showLoading = function(show = true) {
             const spinner = document.getElementById('spinnerOverlay');
             if (spinner) {
@@ -870,16 +862,12 @@
             }
         };
 
-        // ============================================
         // CSRF TOKEN
-        // ============================================
         window.getCsrfToken = function() {
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         };
 
-        // ============================================
         // AJAX FETCH HELPER
-        // ============================================
         window.fetchAjax = function(url, options = {}) {
             const defaults = {
                 headers: {
@@ -893,9 +881,7 @@
             return fetch(url, { ...defaults, ...options });
         };
 
-        // ============================================
         // AJAX BUTTON HANDLER - TANPA RELOAD
-        // ============================================
         document.addEventListener('click', function(e) {
             // Cari tombol AJAX
             const btn = e.target.closest('.btn-ajax, [data-ajax="true"]');
@@ -1007,9 +993,7 @@
             .catch(error => console.error('Error fetching target:', error));
         }
 
-        // ============================================
         // NOTIFICATION SYSTEM
-        // ============================================
         let lastCheck = Date.now();
         let isNotificationOpen = false;
 

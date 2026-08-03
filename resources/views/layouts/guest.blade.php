@@ -679,7 +679,7 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('landing') }}">
                 <i class="bi bi-clipboard-data me-2"></i>SIMANTAP
-                <small>Sekda Kabupaten Bener Meriah</small>
+                <small>Setda Kabupaten Bener Meriah</small>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#guestNav">
                 <span class="navbar-toggler-icon"></span>
@@ -755,7 +755,7 @@
             <div class="row align-items-center g-3">
                 <div class="col-md-6 text-center text-md-start">
                     <span class="small opacity-75">
-                        &copy; {{ date('Y') }} SIMANTAP - Sekda Kabupaten Bener Meriah
+                        &copy; {{ date('Y') }} SIMANTAP - Setda Kabupaten Bener Meriah
                     </span>
                 </div>
                 <div class="col-md-6 text-center text-md-end">

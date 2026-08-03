@@ -1,5 +1,4 @@
 <?php
-// app/Models/Notification.php
 
 namespace App\Models;
 

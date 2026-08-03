@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/NotificationController.php
 
 namespace App\Http\Controllers;
 
@@ -8,9 +7,7 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    /**
-     * Halaman semua notifikasi
-     */
+    // Halaman semua notifikasi
     public function index()
     {
         $notifications = Notification::where('user_id', auth()->id())
@@ -20,9 +17,7 @@ class NotificationController extends Controller
         return view('notifications.index', compact('notifications'));
     }
 
-    /**
-     * API: Mendapatkan notifikasi terbaru
-     */
+    // API: Mendapatkan notifikasi terbaru
     public function getLatest(Request $request)
     {
         $limit = $request->input('limit', 10);
@@ -61,9 +56,7 @@ class NotificationController extends Controller
         return response()->json(['count' => $count]);
     }
 
-    /**
-     * API: Tandai notifikasi sebagai sudah dibaca
-     */
+    // API: Tandai notifikasi sebagai sudah dibaca
     public function markAsRead($id)
     {
         $notification = Notification::where('user_id', auth()->id())
@@ -74,9 +67,7 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    /**
-     * API: Tandai semua notifikasi sebagai sudah dibaca
-     */
+    // API: Tandai semua notifikasi sebagai sudah dibaca
     public function markAllAsRead()
     {
         Notification::where('user_id', auth()->id())

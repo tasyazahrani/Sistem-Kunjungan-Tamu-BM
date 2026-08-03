@@ -13,12 +13,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Halaman Publik — Landing Page & Buku Tamu Digital
-|--------------------------------------------------------------------------
-*/
-
+// Halaman Publik — Landing Page & Buku Tamu Digital
 // Landing Page (beranda publik)
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -27,20 +22,12 @@ Route::get('/buku-tamu', [GuestController::class, 'create'])->name('guest.form')
 Route::post('/buku-tamu', [GuestController::class, 'store'])->name('guest.store');
 Route::get('/buku-tamu/sukses/{kunjungan}', [GuestController::class, 'success'])->name('guest.success');
 
-/*
-|--------------------------------------------------------------------------
-| Autentikasi
-|--------------------------------------------------------------------------
-*/
+// Autentikasi
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-/*
-|--------------------------------------------------------------------------
-| Area Internal — wajib login
-|--------------------------------------------------------------------------
-*/
+// Area Internal — wajib login
 Route::middleware('auth')->group(function () {
 
     // Dashboard — semua role bisa mengakses
@@ -104,10 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/master-data/bidang/{bidang}/delete-ajax', [MasterDataController::class, 'destroyBidangAjax'])->name('master.bidang.destroy.ajax');
     });
 
-    // ============================================
-    // NOTIFIKASI — semua role yang login
-    // ============================================
-    
+    // NOTIFIKASI — semua role yang login    
     // Halaman notifikasi
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     

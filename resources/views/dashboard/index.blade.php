@@ -142,9 +142,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // =============================================
+
     // 1. GRAFIK TREN KUNJUNGAN 14 HARI
-    // =============================================
     const trenLabels = {!! json_encode($trenHarian->pluck('tanggal') ?? []) !!};
     const trenData = {!! json_encode($trenHarian->pluck('jumlah') ?? []) !!};
 
@@ -219,9 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // =============================================
     // 2. GRAFIK KUNJUNGAN BERDASARKAN STATUS
-    // =============================================
     const statusLabels = {!! json_encode($perStatus->map(fn($s) => \App\Models\Kunjungan::STATUS_LABELS[$s->status] ?? $s->status) ?? []) !!};
     const statusData = {!! json_encode($perStatus->pluck('total') ?? []) !!};
 
@@ -265,9 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // =============================================
     // 3. GRAFIK BAR (Instansi, Tujuan, Bidang)
-    // =============================================
     function barChart(id, labels, data, color, label = 'Jumlah') {
         const canvas = document.getElementById(id);
         if (!canvas) return;

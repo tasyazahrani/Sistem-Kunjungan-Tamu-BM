@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 class QrCodeController extends Controller
 {
-    /**
-     * Menampilkan QR Code yang mengarah ke formulir buku tamu publik.
-     * QR ini yang dicetak/ditayangkan di meja resepsionis.
-     */
+    // Menampilkan QR Code yang mengarah ke formulir buku tamu publik. QR ini yang dicetak di meja resepsionis.
     public function show()
     {
         $url = route('guest.form');

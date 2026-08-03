@@ -8,9 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    /**
-     * Contoh penggunaan pada route: ->middleware('role:admin,petugas')
-     */
+    // Contoh penggunaan pada route: ->middleware('role:admin,petugas')
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $user = $request->user();

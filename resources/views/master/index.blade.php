@@ -6,9 +6,7 @@
     <h4 class="fw-bold mb-4">Kelola Data Master</h4>
 
     <div class="row g-3">
-        {{-- ============================================ --}}
         {{-- INSTANSI                                     --}}
-        {{-- ============================================ --}}
         <div class="col-lg-4">
             <div class="card card-stat p-3">
                 <div class="fw-semibold mb-2">Instansi</div>
@@ -42,9 +40,7 @@
             </div>
         </div>
 
-        {{-- ============================================ --}}
         {{-- TUJUAN                                       --}}
-        {{-- ============================================ --}}
         <div class="col-lg-4">
             <div class="card card-stat p-3">
                 <div class="fw-semibold mb-2">Tujuan Kunjungan</div>
@@ -78,9 +74,7 @@
             </div>
         </div>
 
-        {{-- ============================================ --}}
         {{-- BIDANG                                       --}}
-        {{-- ============================================ --}}
         <div class="col-lg-4">
             <div class="card card-stat p-3">
                 <div class="fw-semibold mb-2">Bidang / Bagian</div>
@@ -115,9 +109,7 @@
         </div>
     </div>
 
-    {{-- ============================================ --}}
     {{-- MODAL EDIT                                   --}}
-    {{-- ============================================ --}}
     <div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
@@ -147,16 +139,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ============================================
     // CSRF TOKEN
-    // ============================================
     function getCsrfToken() {
         return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     }
 
-    // ============================================
     // TOAST & LOADING
-    // ============================================
     function showToast(message, type = 'success') {
         if (window.showToast) {
             window.showToast(message, type);
@@ -171,9 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ============================================
     // HELPER: Get List Element
-    // ============================================
     function getList(type) {
         const map = {
             'instansi': 'instansiList',
@@ -183,9 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(map[type]);
     }
 
-    // ============================================
     // HELPER: Get Route
-    // ============================================
     function getRoute(type, action, id = null) {
         const routes = {
             'instansi': {
@@ -210,9 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return routes[type]?.[action] || '';
     }
 
-    // ============================================
     // EVENT DELEGATION - Toggle
-    // ============================================
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.toggle-btn');
         if (!btn) return;
@@ -267,9 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // EVENT DELEGATION - Delete
-    // ============================================
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.delete-btn');
         if (!btn) return;
@@ -319,9 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // EVENT DELEGATION - Edit (Open Modal)
-    // ============================================
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.edit-btn');
         if (!btn) return;
@@ -349,9 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.show();
     });
 
-    // ============================================
     // EDIT - Submit
-    // ============================================
     document.getElementById('editForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -416,9 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // CREATE (Tambah) - AJAX
-    // ============================================
     document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -471,9 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ============================================
     // CREATE LIST ITEM
-    // ============================================
     function createListItem(type, data) {
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center px-0 py-2';
@@ -518,9 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return li;
     }
 
-    // ============================================
     // MODAL - Reset saat ditutup
-    // ============================================
     document.getElementById('editModal').addEventListener('hidden.bs.modal', function() {
         document.getElementById('editForm').action = '';
         document.getElementById('editForm').dataset.type = '';
