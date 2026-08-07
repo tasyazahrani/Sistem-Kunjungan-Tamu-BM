@@ -16,6 +16,8 @@ class Kunjungan extends Model
         'nama_tamu',
         'no_hp',
         'email',
+        'pekerjaan',        // <--- TAMBAHAN BARU
+        'jabatan',          // <--- TAMBAHAN BARU
         'instansi_id',
         'instansi_lainnya',
         'alamat_instansi',
@@ -42,6 +44,8 @@ class Kunjungan extends Model
         'waktu_verifikasi' => 'datetime',
         'waktu_selesai' => 'datetime',
         'jumlah_tamu' => 'integer',
+        'pekerjaan' => 'string', // <--- TAMBAHAN BARU
+        'jabatan' => 'string',   // <--- TAMBAHAN BARU
     ];
 
     // STATUS CONSTANTS - TANPA DUPLIKAT
@@ -51,7 +55,7 @@ class Kunjungan extends Model
         'disetujui' => 'Disetujui',
         'sedang_berkunjung' => 'Sedang Berkunjung',
         'selesai' => 'Selesai',
-        'ditolak' => 'Ditolak',
+        'ditunda' => 'Ditunda',
     ];
 
     // Status colors mapping
@@ -60,7 +64,7 @@ class Kunjungan extends Model
         'disetujui' => 'info',
         'sedang_berkunjung' => 'primary',
         'selesai' => 'success',
-        'ditolak' => 'danger',
+        'ditunda' => 'danger',
     ];
 
     // Status yang bisa diedit
@@ -70,7 +74,7 @@ class Kunjungan extends Model
     public const VERIFIABLE_STATUSES = ['menunggu_verifikasi'];
 
     // Status yang bisa dihapus
-    public const DELETABLE_STATUSES = ['menunggu_verifikasi', 'ditolak'];
+    public const DELETABLE_STATUSES = ['menunggu_verifikasi', 'ditunda'];
 
     // BOOT METHOD
     protected static function booted(): void
@@ -167,6 +171,18 @@ class Kunjungan extends Model
     {
         return $this->bidang->nama_bidang ?? '-';
     }
+
+    // ================= ACCESSORS BARU (UNTUK PEKERJAAN & JABATAN) =================
+    public function getPekerjaanAttribute($value): string
+    {
+        return $value ?? '-';
+    }
+
+    public function getJabatanAttribute($value): string
+    {
+        return $value ?? '-';
+    }
+    // ==============================================================================
 
     public function getWaktuKunjunganFormattedAttribute(): string
     {
@@ -282,7 +298,7 @@ class Kunjungan extends Model
     public function cancel(): void
     {
         $this->update([
-            'status' => 'ditolak',
+            'status' => 'ditunda',
         ]);
     }
 

@@ -72,6 +72,25 @@
                        value="{{ old('jumlah_tamu', 1) }}" required>
             </div>
 
+            {{-- ================= KOLOM PEKERJAAN (BARU) ================= --}}
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">
+                    Pekerjaan / Profesi <span class="text-muted">(opsional)</span>
+                </label>
+                <input type="text" name="pekerjaan" class="form-control" 
+                       value="{{ old('pekerjaan') }}" placeholder="Contoh: PNS, Swasta, Wiraswasta">
+            </div>
+
+            {{-- ================= KOLOM JABATAN (BARU) ================= --}}
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">
+                    Jabatan / Unit Kerja <span class="text-muted">(opsional)</span>
+                </label>
+                <input type="text" name="jabatan" class="form-control" 
+                       value="{{ old('jabatan') }}" placeholder="Contoh: Kepala Dinas, Kabid, Staff">
+            </div>
+            {{-- ======================================================== --}}
+
             {{-- Instansi --}}
             <div class="col-md-6">
                 <label class="form-label fw-semibold small">

@@ -78,6 +78,12 @@ class KunjunganController extends Controller
     public function update(Request $request, Kunjungan $kunjungan)
     {
         $validated = $this->validasiKunjungan($request);
+        
+        // Jika status tidak dikirim di form edit, pertahankan status lama
+        if (!isset($validated['status'])) {
+            unset($validated['status']);
+        }
+
         $kunjungan->update($validated);
 
         return redirect()->route('kunjungan.index')->with('success', 'Data kunjungan berhasil diperbarui.');
@@ -89,7 +95,7 @@ class KunjunganController extends Controller
     public function verifikasi(Request $request, Kunjungan $kunjungan)
     {
         $request->validate([
-            'status' => ['required', 'in:menunggu_verifikasi,disetujui,sedang_berkunjung,selesai,ditolak'],
+            'status' => ['required', 'in:menunggu_verifikasi,disetujui,sedang_berkunjung,selesai,ditunda'],
             'catatan_petugas' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -136,6 +142,12 @@ class KunjunganController extends Controller
             'nama_tamu' => ['required', 'string', 'max:150'],
             'no_hp' => ['required', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:150'],
+            
+            // ================= KOLOM BARU =================
+            'pekerjaan' => ['nullable', 'string', 'max:150'], 
+            'jabatan' => ['nullable', 'string', 'max:150'],
+            // ==============================================
+
             'instansi_id' => ['nullable', 'exists:instansis,id'],
             'instansi_lainnya' => ['nullable', 'string', 'max:150'],
             'alamat_instansi' => ['nullable', 'string', 'max:255'],
@@ -145,7 +157,7 @@ class KunjunganController extends Controller
             'bidang_id' => ['nullable', 'exists:bidangs,id'],
             'nama_pejabat_dituju' => ['nullable', 'string', 'max:150'],
             'keperluan' => ['required', 'string', 'max:1000'],
-            'status' => ['sometimes', 'in:menunggu_verifikasi,disetujui,sedang_berkunjung,selesai,ditolak'],
+            'status' => ['sometimes', 'in:menunggu_verifikasi,disetujui,sedang_berkunjung,selesai,ditunda'],
         ]);
     }
 }

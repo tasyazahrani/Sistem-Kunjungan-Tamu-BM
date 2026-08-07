@@ -27,6 +27,19 @@
         <input type="number" min="1" max="50" name="jumlah_tamu" class="form-control" value="{{ old('jumlah_tamu', $kunjungan->jumlah_tamu ?? 1) }}" required>
     </div>
 
+    {{-- ================= KOLOM PEKERJAAN (BARU) ================= --}}
+    <div class="col-md-6">
+        <label class="form-label small fw-semibold">Pekerjaan / Profesi</label>
+        <input type="text" name="pekerjaan" class="form-control" value="{{ old('pekerjaan', $kunjungan->pekerjaan ?? '') }}" placeholder="Contoh: PNS, Swasta, Wiraswasta">
+    </div>
+
+    {{-- ================= KOLOM JABATAN (BARU) ================= --}}
+    <div class="col-md-6">
+        <label class="form-label small fw-semibold">Jabatan / Unit Kerja</label>
+        <input type="text" name="jabatan" class="form-control" value="{{ old('jabatan', $kunjungan->jabatan ?? '') }}" placeholder="Contoh: Kepala Dinas, Kabid, Staff">
+    </div>
+    {{-- ========================================================= --}}
+
     <div class="col-md-6">
         <label class="form-label small fw-semibold">Instansi</label>
         <select name="instansi_id" class="form-select">

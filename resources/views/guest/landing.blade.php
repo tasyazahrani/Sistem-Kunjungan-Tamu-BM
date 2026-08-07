@@ -29,7 +29,7 @@
 
                 <h1 class="hero-title">
                     Sistem Monitoring <br>
-                    <span>Kunjungan</span> Terpadu
+                    <span>Kunjungan Tamu</span> Terpadu
                 </h1>
 
                 <p class="hero-subtitle mx-auto my-4" style="max-width: 600px;">

@@ -37,11 +37,13 @@ class LaporanController extends Controller
     {
         $filters = $request->only(['tanggal_mulai', 'tanggal_akhir', 'instansi_id', 'tujuan_kunjungan_id', 'status']);
 
+        // Mengambil data kunjungan beserta relasinya
         $kunjungans = Kunjungan::with(['instansi', 'tujuanKunjungan', 'bidang'])
             ->filter($filters)
             ->orderBy('waktu_kunjungan')
             ->get();
 
+        // Load view PDF dengan data yang sudah diproses
         $pdf = Pdf::loadView('laporan.pdf', [
             'kunjungans' => $kunjungans,
             'filters' => $filters,

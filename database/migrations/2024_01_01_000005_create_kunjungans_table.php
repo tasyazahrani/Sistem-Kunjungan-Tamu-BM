@@ -34,7 +34,7 @@ return new class extends Migration
                 'disetujui',
                 'sedang_berkunjung',
                 'selesai',
-                'ditolak',
+                'ditunda',
             ])->default('menunggu_verifikasi');
             $table->text('catatan_petugas')->nullable();
             $table->foreignId('diverifikasi_oleh')->nullable()->constrained('users')->nullOnDelete();
